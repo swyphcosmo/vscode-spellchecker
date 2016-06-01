@@ -3,7 +3,8 @@
 import * as vscode from 'vscode';
 import fs = require( 'fs' );
 import path = require( 'path' );
-let sc = require( 'hunspell-spellchecker' );
+// let sc = require( 'hunspell-spellchecker' );
+let sc = require( '../../lib/hunspell-spellchecker/lib/index.js' );
 
 interface SpellMDSettings {
     language: string,

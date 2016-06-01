@@ -1,0 +1,3 @@
+[submodule "lib/hunspell-spellchecker"]
+	path = lib/hunspell-spellchecker
+	url = https://github.com/geowarin/hunspell-spellchecker.git
