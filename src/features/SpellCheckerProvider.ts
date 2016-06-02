@@ -17,7 +17,8 @@ interface SpellSettings {
 
 export default class SpellCheckerProvider implements vscode.CodeActionProvider 
 {
-	private static commandId: string = 'SpellChecker.runCodeAction';
+	private static suggestCommandId: string = 'SpellChecker.fixSuggestionCodeAction';
+	private static ignoreCommandId: string = 'SpellChecker.ignoreCodeAction';	
 	private command: vscode.Disposable;
 	private diagnosticCollection: vscode.DiagnosticCollection;
     private problemCollection = {};
@@ -37,7 +38,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         this.settings = this.GetSettings();
         this.SetLanguage( this.settings.language );
         
-		this.command = vscode.commands.registerCommand( SpellCheckerProvider.commandId, this.runCodeAction, this );
+		this.command = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
+		this.command = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );		
 		subscriptions.push( this );
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection( 'Spelling' );
 
@@ -138,33 +140,37 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
                     // console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
                     
                     let lineRange = new vscode.Range( linenumber, colnumber, linenumber, colnumber + token.length );
+					
+					// Make sure word isn't in the ignore list
+					if( this.settings.ignoreWordsList.indexOf( token ) < 0 )
+					{
+						if( token in this.problemCollection )
+						{
+							let diag = new vscode.Diagnostic( lineRange, this.problemCollection[ token ], vscode.DiagnosticSeverity.Error );
+							diag.source = 'Spell Checker';
+							diagnostics.push( diag );
+						}
+						else
+						{              
+							let message = 'Spelling [ ' + token + ' ]: suggestions [ ';
+							let suggestions = this.SpellChecker.suggest( token );
+							for( let s of suggestions )
+							{
+								message += s + ', ';
+							}
+							if( suggestions.length > 0 )
+								message = message.slice( 0, message.length - 3 );
+							message += ' ]';
+							
+							// console.log( message );
 
-                    if( token in this.problemCollection )
-                    {
-                        let diag = new vscode.Diagnostic( lineRange, this.problemCollection[ token ], vscode.DiagnosticSeverity.Error );
-                        diag.source = 'Spell Checker';
-                        diagnostics.push( diag );
-                    }
-                    else
-                    {              
-                        let message = 'Spelling [ ' + token + ' ]: suggestions [ ';
-                        let suggestions = this.SpellChecker.suggest( token );
-                        for( let s of suggestions )
-                        {
-                            message += s + ', ';
-                        }
-                        if( suggestions.length > 0 )
-                            message = message.slice( 0, message.length - 3 );
-                        message += ' ]';
-                        
-                        // console.log( message );
-
-                        let diag = new vscode.Diagnostic( lineRange, message, vscode.DiagnosticSeverity.Error );
-                        diag.source = 'Spell Checker';
-                        diagnostics.push( diag );
-                        
-                        this.problemCollection[ token ] = message;
-                    }
+							let diag = new vscode.Diagnostic( lineRange, message, vscode.DiagnosticSeverity.Error );
+							diag.source = 'Spell Checker';
+							diagnostics.push( diag );
+							
+							this.problemCollection[ token ] = message;
+						}
+					}
                 }
             }
         }
@@ -193,35 +199,43 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		// should always be true
 		if( match.length >= 2 )
 			word = match[ 1 ];
-		
+			
 		if( word.length == 0 )
 			return undefined;
 		
 		// Get suggestions
         match = diagnostic.message.match( /\[\ ([a-zA-Z0-9,\ ]+)\ \]$/ );
         let suggestionstring:string = '';
-        
-        if( match.length >= 2 )
-			suggestionstring = match[ 1 ];
-			
-		let suggestions: string[] = suggestionstring.split( /\,\ /g );
 		
 		let commands:vscode.Command[] = [];
-		
-		// Add suggestions to command list
-		suggestions.forEach( function( suggestion )
+        
+        if( match && match.length >= 2 )
 		{
-			commands.push( {
-				title: 'Replace with \'' + suggestion + '\'',
-				command: SpellCheckerProvider.commandId,
-				arguments: [ document, diagnostic, word, suggestion ]
+			suggestionstring = match[ 1 ];
+			
+			let suggestions: string[] = suggestionstring.split( /\,\ /g );
+			
+			// Add suggestions to command list
+			suggestions.forEach( function( suggestion )
+			{
+				commands.push( {
+					title: 'Replace with \'' + suggestion + '\'',
+					command: SpellCheckerProvider.suggestCommandId,
+					arguments: [ document, diagnostic, word, suggestion ]
+				});
 			});
+		}
+		
+		commands.push( {
+			title: 'Add \'' + word + '\' to dictionary',
+			command: SpellCheckerProvider.ignoreCommandId,
+			arguments: [ document, word ]
 		});
 
 		return commands;
 	}
 	
-	private runCodeAction( document: vscode.TextDocument, diagnostic:vscode.Diagnostic, word:string, suggestion:string ): any
+	private fixSuggestionCodeAction( document: vscode.TextDocument, diagnostic:vscode.Diagnostic, word:string, suggestion:string ): any
     {
 		let docWord:string = document.getText( diagnostic.range );
 		
@@ -246,6 +260,29 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		{
 			vscode.window.showErrorMessage( 'The suggestion was not applied because it is out of date. You might have tried to apply the same edit twice.' );
 		}
+	}
+	
+	private ignoreCodeAction( document: vscode.TextDocument, word: string ): any
+	{
+		if( this.AddWordToIgnoreList( word ) )
+		{
+			this.doSpellCheck( document );
+		}
+		else
+		{
+			vscode.window.showErrorMessage( 'The word has already been added to the ignore list. You might have tried to add the same word twice.' );			
+		}
+	}
+	
+	public AddWordToIgnoreList( word: string ): boolean
+	{
+		if( this.settings.ignoreWordsList.indexOf( word ) < 0 )
+		{
+			this.settings.ignoreWordsList.push( word );
+			return true;
+		}
+		
+		return false;
 	}
     
     public SetLanguage( language: string = 'en_US' ): void
