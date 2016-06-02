@@ -5,6 +5,8 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 
+let DEBUG:boolean = false;
+
 interface SpellSettings {
     language: string,
     ignoreWordsList: string[];
@@ -67,14 +69,17 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 	private doSpellCheck( textDocument: vscode.TextDocument )
     {
-        console.log( textDocument.languageId );
+		if( DEBUG )
+        	console.log( textDocument.languageId );
+			
 		if( textDocument.languageId !== 'markdown' && textDocument.languageId !== 'plaintext' )
         {
 			return;
 		}
 		
         let startTime = new Date().getTime();
-        console.log( 'Starting spell check on ' + textDocument.fileName );
+		if( DEBUG )
+        	console.log( 'Starting spell check on ' + textDocument.fileName );
         
         let diagnostics: vscode.Diagnostic[] = [];
         
@@ -108,7 +113,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         let tokens = text.split( ' ' );
         let lines = textoriginal.split( '\n' );
         
-        console.log( 'Num tokens: ' + String( tokens.length ) );
+		if( DEBUG )
+        	console.log( 'Num tokens: ' + String( tokens.length ) );
         
         for( let i in tokens )
         {
@@ -169,8 +175,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		
         let endTime = new Date().getTime();
         let minutes = ( endTime - startTime ) / 1000;
-        console.log( 'Check completed in ' + String( minutes ) );
-        console.log( 'Found ' + String( diagnostics.length ) + ' errors' );
+		if( DEBUG )
+        {
+			console.log( 'Check completed in ' + String( minutes ) );
+        	console.log( 'Found ' + String( diagnostics.length ) + ' errors' );
+		}
 	}
 	
 	public provideCodeActions( document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken ): vscode.Command[]
