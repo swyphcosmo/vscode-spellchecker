@@ -36,7 +36,7 @@ The following settings can be changed:
 * `language`: currently the only supported language is US English so the only valid value is `"en_US"`
 * `ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
-* `ignoreRegExp`: an array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. `/\s/g` becomes `"/\\\\s/g`. The following are examples provided in the example configuration file:
+* `ignoreRegExp`: an array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. `/\s/g` becomes `"/\\\\s/g"`. The following are examples provided in the example configuration file:
 	* `"/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"`: remove links to image and markdown files
 	* `"/((http|https|ftp|git)\\\\S*)/g"`: remove hyperlinks
 	* `"/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"`: remove code blocks
@@ -49,13 +49,13 @@ Additional sections are already removed from files, including:
 * Inline code blocks
 * Email addresses
 
->*Note:* If this file is updated manually, you will need to reload VSCode for changes to take effect.
+>**Note:** If this file is updated manually, you will need to reload VSCode for changes to take effect.
 
 ## Benchmarks (sort of)
 
 A 397-line document was used to test the functionality. This was a conference paper that I recently wrote using Pandoc (citeproc and crossref). Simple space separation results in 5134 words. Here are some of the processing times as functionality was added. These were measured using `new Date().getTime()` so results were not consistent.  
 
-* Initial test: 1.577 Minutes
+* Initial test: 1.577 minutes
 * Added suggestion dictionary for suggestions that have already been processed: 1.0507 minutes
 * Removed YAML settings at the beginning of the document (Pandoc settings): 0.841 minutes
 * Removed inline citations: 0.50695 minutes
