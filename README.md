@@ -19,15 +19,24 @@ A 397-line document was used to test the functionality. This was a conference pa
 * Removed inline image links: 0.2913 minutes
 * Words of length >= 4: 13.931 seconds
 
+Rechecking the document during edits happens much faster ( < 1 sec ).
+
+This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 year old Sony Vaio VPCSA ). Full document checking occured in 6.842 seconds. Realtime checking while editing occurs in less than 0.01 seconds.
+
 ## Known Issues
 
-* Only U.S. English supported at the moment
+* Only U.S. English supported
 * Entire file is rechecked with each update
-* Settings are not configurable
+
+## TODO
+
+* Add additional language support
+	* Add command to change language
+* Add command to create generic settings file in current workspace
 
 ## Acknowledgements
 
-Based heavily on the Sean McBreen's [Spell and Grammer Check](https://github.com/Microsoft/vscode-spell-check).
+Big thanks to Sean McBreen for [Spell and Grammer Check](https://github.com/Microsoft/vscode-spell-check). 
 
 ## License
 
