@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 
+// Toggle debug output
 let DEBUG:boolean = false;
 
 interface SpellSettings {
@@ -18,7 +19,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 {
 	private static suggestCommandId: string = 'SpellChecker.fixSuggestionCodeAction';
 	private static ignoreCommandId: string = 'SpellChecker.ignoreCodeAction';	
-	private command: vscode.Disposable;
+	private suggestCommand: vscode.Disposable;
+	private ignoreCommand: vscode.Disposable;
 	private diagnosticCollection: vscode.DiagnosticCollection;
     private problemCollection = {};
 	private diagnosticMap = {};
@@ -37,8 +39,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         this.settings = this.getSettings();
         this.setLanguage( this.settings.language );
         
-		this.command = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
-		this.command = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );		
+		// vscode.commands.registerCommand( 'spellchecker.suggest', Suggest );
+    	// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
+
+		this.suggestCommand = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
+		this.ignoreCommand = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );		
 		subscriptions.push( this );
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection( 'Spelling' );
 
@@ -54,13 +59,18 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		// Spell check all open documents
 		vscode.workspace.textDocuments.forEach( this.doSpellCheck, this );
+
+		// register code actions provider
+    	for( let i = 0; i < this.settings.documentTypes.length; i++ )
+       		vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
 	}
 
 	public dispose(): void
     {
 		this.diagnosticCollection.clear();
 		this.diagnosticCollection.dispose();
-		this.command.dispose();
+		this.suggestCommand.dispose();
+		this.ignoreCommand.dispose();
 	}
 	
 	private doDiffSpellCheck( event:vscode.TextDocumentChangeEvent )
@@ -85,6 +95,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         let diagnostics: vscode.Diagnostic[] = [];
         
         let textoriginal = textDocument.getText();
+		
         // change to common line endings
         textoriginal = textoriginal.replace( /\r?\n/g, '\n' );
         let text = textoriginal;
@@ -340,6 +351,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
             
         this.SpellChecker.use( this.DICT );
     }
+
+	public getDocumentTypes(): string[]
+	{
+		return this.settings.documentTypes;
+	}
 
     private getSettings() : SpellSettings
     {
