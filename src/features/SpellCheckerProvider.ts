@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 
 // Toggle debug output
-let DEBUG:boolean = false;
+let DEBUG:boolean = true;
 
 interface SpellSettings {
     language: string,
@@ -157,6 +157,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
                 
                 colnumber = position;
                 lastposition = position;
+
+				if( token.indexOf( '’' ) >= 0 )
+				{
+					token = token.replace( /’/, '\'' );
+				}
                 
                 if( !this.SpellChecker.check( token ) )
                 {

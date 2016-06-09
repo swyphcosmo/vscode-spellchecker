@@ -28,7 +28,6 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 * Only U.S. English supported
 * Entire file is rechecked with each update
-* Right single quotation mark ( `’`, character code 0x2019 ) produces error when used in contractions 
 
 ## TODO
 
