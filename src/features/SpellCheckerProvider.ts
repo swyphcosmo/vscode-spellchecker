@@ -10,8 +10,7 @@ let DEBUG:boolean = false;
 interface SpellSettings {
     language: string,
     ignoreWordsList: string[];
-    mistakeTypeToStatus: {}[];
-    languageIDs: string[];
+    documentTypes: string[];
     ignoreRegExp: string[];
 }
 
@@ -25,7 +24,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private diagnosticMap = {};
     private DICT = undefined;
     private settings: SpellSettings;
-    private static CONFIGFILE = vscode.workspace.rootPath + "/.vscode/spell.json";
+    private static CONFIGFILE: string = '';
     private SpellChecker = new sc();
     private extensionRoot: string;
 
@@ -35,8 +34,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         
         this.extensionRoot = context.extensionPath;
         
-        this.settings = this.GetSettings();
-        this.SetLanguage( this.settings.language );
+        this.settings = this.getSettings();
+        this.setLanguage( this.settings.language );
         
 		this.command = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
 		this.command = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );		
@@ -74,7 +73,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		if( DEBUG )
         	console.log( textDocument.languageId );
 			
-		if( textDocument.languageId !== 'markdown' && textDocument.languageId !== 'plaintext' )
+		if( this.settings.documentTypes.indexOf( textDocument.languageId ) < 0 )
         {
 			return;
 		}
@@ -89,15 +88,27 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         // change to common line endings
         textoriginal = textoriginal.replace( /\r?\n/g, '\n' );
         let text = textoriginal;
+
+		text = this.processUserIgnoreRegex( text );
+		
         // remove pandoc yaml header
         text = text.replace( /---(.|\n)*\.\.\./g, '' );
+		// remove '&nbsp;'
+		text = text.replace( /&nbsp;/g, '' );
         // remove citations
         text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, '' );
         text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, '' );
+		// remove code blocks
+		text = text.replace( /^(```\s*)(\w+)?(\s*[\w\W]+?\n*)(```\s*)\n*$/gm, '' );
+		// remove inline code blocks
+		text = text.replace( /`[\w\W]+?`/g, '' );
         // remove image links
-        text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
+        // text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
+		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, '' );
+		// remove web links
+		text = text.replace( /(http|https|ftp|git)\S*/g, '' )
         // remove email addresses 
-        text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, ' ' );
+        text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, '' );
         // remove non-letter characters
         text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-]/g, ' ' );
         // remove numbers:
@@ -106,6 +117,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         text = text.replace( /[\s ]['"]([a-zA-Z])/g, '$1' );
         // remove trailing quotations
         text = text.replace( /' /g, ' ' );
+
         let lastposition = 0;
         let position = 0;
         let linenumber = 0;
@@ -187,6 +199,36 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         	console.log( 'Found ' + String( diagnostics.length ) + ' errors' );
 		}
 	}
+
+	private processUserIgnoreRegex( text: string ): string
+	{
+		for( let i = 0; i < this.settings.ignoreRegExp.length; i++ )
+		{
+			// Convert the JSON of regExp Strings into a real RegExp
+			let flags = this.settings.ignoreRegExp[ i ].replace( /.*\/([gimy]*)$/, '$1' );
+			let pattern = this.settings.ignoreRegExp[ i ].replace( new RegExp('^/(.*?)/' + flags + '$'), '$1' );
+
+			pattern = pattern.replace( /\\\\/g, '\\' );
+
+			if( DEBUG )
+			{
+				console.log( this.settings.ignoreRegExp[ i ] );
+				console.log( pattern );
+				console.log( flags );
+			}
+
+			let regex = new RegExp( pattern, flags );
+
+			if( DEBUG )
+				console.log( text.match( regex ) );
+			
+			text = text.replace( regex, ' ' );	
+
+
+    	}
+
+		return text;
+	}
 	
 	public provideCodeActions( document: vscode.TextDocument, range: vscode.Range, context: vscode.CodeActionContext, token: vscode.CancellationToken ): vscode.Command[]
 	{
@@ -264,18 +306,19 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	
 	private ignoreCodeAction( document: vscode.TextDocument, word: string ): any
 	{
-		if( this.AddWordToIgnoreList( word ) )
+		if( this.addWordToIgnoreList( word ) )
 		{
 			this.doSpellCheck( document );
 		}
 		else
 		{
-			vscode.window.showErrorMessage( 'The word has already been added to the ignore list. You might have tried to add the same word twice.' );			
+			vscode.window.showWarningMessage( 'The word has already been added to the ignore list. You might have tried to add the same word twice.' );			
 		}
 	}
 	
-	public AddWordToIgnoreList( word: string ): boolean
+	public addWordToIgnoreList( word: string ): boolean
 	{
+		// Only add the word if it's not already in the list
 		if( this.settings.ignoreWordsList.indexOf( word ) < 0 )
 		{
 			this.settings.ignoreWordsList.push( word );
@@ -285,7 +328,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		return false;
 	}
     
-    public SetLanguage( language: string = 'en_US' ): void
+    public setLanguage( language: string = 'en_US' ): void
     {
         // console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
         this.settings.language = language;
@@ -298,14 +341,36 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
         this.SpellChecker.use( this.DICT );
     }
 
-    private GetSettings() : SpellSettings
+    private getSettings() : SpellSettings
     {
-        return {
-            language: 'en_US',
-            ignoreWordsList: [],
-            mistakeTypeToStatus: [],
-            languageIDs: [],
-            ignoreRegExp: []
-        };
+		if( SpellCheckerProvider.CONFIGFILE.length == 0 )
+		{
+			SpellCheckerProvider.CONFIGFILE = path.join( vscode.workspace.rootPath, '.vscode', 'spellchecker.json' );
+		}
+
+		if( fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
+		{
+			let settings: SpellSettings = JSON.parse( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) );
+
+			if( DEBUG )
+			{
+				console.log( 'Found configuration file' );			
+				console.log( settings );
+			}
+
+			return settings;
+		}
+		else
+		{
+			if( DEBUG )
+				console.log( 'Configuration file not found: ' + SpellCheckerProvider.CONFIGFILE );
+
+			return {
+				language: 'en_US',
+				ignoreWordsList: [],
+				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
+				ignoreRegExp: []
+			};
+		}
     }
 }
