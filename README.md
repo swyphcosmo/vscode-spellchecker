@@ -1,12 +1,10 @@
 # Offline Spell Checker
 
->**Notice:** This extension is in an alpha state and is still under heavy development. Pull requests welcome!  
-
 ## Description 
 
-This extension is a spell checker that uses a local dictionary for offline usage. [hunspell-spellchecker](https://github.com/GitbookIO/hunspell-spellchecker) is used to load hunspell formatted dictionaries. Errors are be highlighted, and hovering over them will show possible suggestions. The `suggest` function was modified according to [https://github.com/GitbookIO/hunspell-spellchecker/pull/7] to speed up word suggestions.
+This extension is a spell checker that uses a local dictionary for offline usage. [hunspell-spellchecker](https://github.com/GitbookIO/hunspell-spellchecker) is used to load hunspell formatted dictionaries. Errors are highlighted, and hovering over them will show possible suggestions. The `suggest` function was modified according to [https://github.com/GitbookIO/hunspell-spellchecker/pull/7] to speed up word suggestions.
 
-Since this extension is not currently released, you can load it in the extension debugger by following [these](https://code.visualstudio.com/docs/extensions/example-hello-world#_running-your-extension) instructions. 
+This extension can be found on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker).
 
 ## Benchmarks (sort of)
 

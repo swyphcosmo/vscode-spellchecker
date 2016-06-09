@@ -1,9 +1,9 @@
 {
   "name": "spellchecker",
   "displayName": "SpellChecker",
-  "description": "Local spell checker",
-  "version": "0.0.1",
-  "publisher": "mvernier",
+  "description": "Offline spell checker",
+  "version": "1.0.0",
+  "publisher": "swyphcosmo",
   "engines": {
     "vscode": "^1.0.0"
   },
@@ -16,20 +16,8 @@
   "main": "./out/src/extension",
   "contributes": {
     "commands": [
-      {
-        "command": "spellchecker.suggest",
-        "title": "Spell Checker: Suggestions"
-      },
-      {
-        "command": "spellchecker.setLanguage",
-        "title": "Spell Checker: Change Language"
-      }
     ],
     "keybindings": [
-      {
-        "command": "spellchecker.suggest",
-        "key": "Alt+."
-      }
     ]
   },
   "scripts": {
@@ -42,8 +30,6 @@
     "vscode": "^0.11.0"
   },
   "dependencies": {
-    "diff": "^2.2.2",
-    "hunspell-spellchecker": "^1.0.2"
   },
   "license": "MIT",
   "repository": {
