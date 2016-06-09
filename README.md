@@ -19,7 +19,7 @@ A 397-line document was used to test the functionality. This was a conference pa
 
 Rechecking the document during edits happens much faster ( < 1 sec ).
 
-This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 year old Sony Vaio VPCSA ). Full document checking occured in 6.842 seconds. Realtime checking while editing occurs in less than 0.01 seconds.
+This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 year old Sony Vaio VPCSA ). Full document checking occurred in 6.842 seconds. Realtime checking while editing occurs in less than 0.01 seconds.
 
 ## Known Issues
 
