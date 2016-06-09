@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 
 // Toggle debug output
-let DEBUG:boolean = true;
+let DEBUG:boolean = false;
 
 interface SpellSettings {
     language: string,
