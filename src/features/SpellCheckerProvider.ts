@@ -9,10 +9,10 @@ let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 let DEBUG:boolean = false;
 
 interface SpellSettings {
-    language: string,
-    ignoreWordsList: string[];
-    documentTypes: string[];
-    ignoreRegExp: string[];
+	language: string,
+	ignoreWordsList: string[];
+	documentTypes: string[];
+	ignoreRegExp: string[];
 }
 
 export default class SpellCheckerProvider implements vscode.CodeActionProvider 
@@ -22,25 +22,25 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private suggestCommand: vscode.Disposable;
 	private ignoreCommand: vscode.Disposable;
 	private diagnosticCollection: vscode.DiagnosticCollection;
-    private problemCollection = {};
+	private problemCollection = {};
 	private diagnosticMap = {};
-    private DICT = undefined;
-    private settings: SpellSettings;
-    private static CONFIGFILE: string = '';
-    private SpellChecker = new sc();
-    private extensionRoot: string;
+	private DICT = undefined;
+	private settings: SpellSettings;
+	private static CONFIGFILE: string = '';
+	private SpellChecker = new sc();
+	private extensionRoot: string;
 
 	public activate( context: vscode.ExtensionContext )
-    {
-        let subscriptions: vscode.Disposable[] = context.subscriptions;
-        
-        this.extensionRoot = context.extensionPath;
-        
-        this.settings = this.getSettings();
-        this.setLanguage( this.settings.language );
-        
+	{
+		let subscriptions: vscode.Disposable[] = context.subscriptions;
+		
+		this.extensionRoot = context.extensionPath;
+		
+		this.settings = this.getSettings();
+		this.setLanguage( this.settings.language );
+		
 		// vscode.commands.registerCommand( 'spellchecker.suggest', Suggest );
-    	// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
+		// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
 
 		this.suggestCommand = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
 		this.ignoreCommand = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );		
@@ -49,7 +49,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		vscode.workspace.onDidOpenTextDocument( this.doSpellCheck, this, subscriptions );
 		vscode.workspace.onDidCloseTextDocument( ( textDocument ) => 
-        {
+		{
 			this.diagnosticCollection.delete( textDocument.uri );
 		}, null, subscriptions);
 
@@ -61,12 +61,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		vscode.workspace.textDocuments.forEach( this.doSpellCheck, this );
 
 		// register code actions provider
-    	for( let i = 0; i < this.settings.documentTypes.length; i++ )
-       		vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
+		for( let i = 0; i < this.settings.documentTypes.length; i++ )
+	   		vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
 	}
 
 	public dispose(): void
-    {
+	{
 		this.diagnosticCollection.clear();
 		this.diagnosticCollection.dispose();
 		this.suggestCommand.dispose();
@@ -79,95 +79,95 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	}
 
 	private doSpellCheck( textDocument: vscode.TextDocument )
-    {
+	{
 		if( DEBUG )
-        	console.log( textDocument.languageId );
+			console.log( textDocument.languageId );
 			
 		if( this.settings.documentTypes.indexOf( textDocument.languageId ) < 0 )
-        {
+		{
 			return;
 		}
 		
-        let startTime = new Date().getTime();
+		let startTime = new Date().getTime();
 		if( DEBUG )
-        	console.log( 'Starting spell check on ' + textDocument.fileName );
-        
-        let diagnostics: vscode.Diagnostic[] = [];
-        
-        let textoriginal = textDocument.getText();
+			console.log( 'Starting spell check on ' + textDocument.fileName );
 		
-        // change to common line endings
-        textoriginal = textoriginal.replace( /\r?\n/g, '\n' );
-        let text = textoriginal;
+		let diagnostics: vscode.Diagnostic[] = [];
+		
+		let textoriginal = textDocument.getText();
+		
+		// change to common line endings
+		textoriginal = textoriginal.replace( /\r?\n/g, '\n' );
+		let text = textoriginal;
 
 		text = this.processUserIgnoreRegex( text );
 		
-        // remove pandoc yaml header
-        text = text.replace( /---(.|\n)*\.\.\./g, '' );
+		// remove pandoc yaml header
+		text = text.replace( /---(.|\n)*\.\.\./g, '' );
 		// remove '&nbsp;'
 		text = text.replace( /&nbsp;/g, '' );
-        // remove citations
-        text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, '' );
-        text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, '' );
+		// remove citations
+		text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, '' );
+		text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, '' );
 		// remove code blocks
 		text = text.replace( /^(```\s*)(\w+)?(\s*[\w\W]+?\n*)(```\s*)\n*$/gm, '' );
 		// remove inline code blocks
 		text = text.replace( /`[\w\W]+?`/g, '' );
-        // remove image links
-        // text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
+		// remove image links
+		// text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
 		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, '' );
 		// remove web links
 		text = text.replace( /(http|https|ftp|git)\S*/g, '' )
-        // remove email addresses 
-        text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, '' );
-        // remove non-letter characters
-        text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-]/g, ' ' );
-        // remove numbers:
-        text = text.replace( / [0-9]+/g, ' ' );
-        // remove leading quotations
-        text = text.replace( /[\s ]['"]([a-zA-Z])/g, '$1' );
-        // remove trailing quotations
-        text = text.replace( /' /g, ' ' );
+		// remove email addresses 
+		text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, '' );
+		// remove non-letter characters
+		text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-]/g, ' ' );
+		// remove numbers:
+		text = text.replace( / [0-9]+/g, ' ' );
+		// remove leading quotations
+		text = text.replace( /[\s ]['"]([a-zA-Z])/g, '$1' );
+		// remove trailing quotations
+		text = text.replace( /' /g, ' ' );
 
-        let lastposition = 0;
-        let position = 0;
-        let linenumber = 0;
-        let colnumber = 0;
-        let lastline = 0;
-        
-        let tokens = text.split( ' ' );
-        let lines = textoriginal.split( '\n' );
-        
+		let lastposition = 0;
+		let position = 0;
+		let linenumber = 0;
+		let colnumber = 0;
+		let lastline = 0;
+		
+		let tokens = text.split( ' ' );
+		let lines = textoriginal.split( '\n' );
+		
 		if( DEBUG )
-        	console.log( 'Num tokens: ' + String( tokens.length ) );
-        
-        for( let i in tokens )
-        {
-            let token = tokens[ i ];
-            if( token.length > 3 )
-            {
-                // find line number and column number
-                position = lines[ linenumber ].indexOf( token, lastposition );
-                while( position < 0 )
-                {
-                    lastposition = 0;
-                    linenumber++;
-                    position = lines[ linenumber ].indexOf( token, lastposition );
-                }
-                
-                colnumber = position;
-                lastposition = position;
+			console.log( 'Num tokens: ' + String( tokens.length ) );
+		
+		for( let i in tokens )
+		{
+			let token = tokens[ i ];
+			if( token.length > 3 )
+			{
+				// find line number and column number
+				position = lines[ linenumber ].indexOf( token, lastposition );
+				while( position < 0 )
+				{
+					lastposition = 0;
+					linenumber++;
+					position = lines[ linenumber ].indexOf( token, lastposition );
+				}
+				
+				colnumber = position;
+				lastposition = position;
 
 				if( token.indexOf( '’' ) >= 0 )
 				{
 					token = token.replace( /’/, '\'' );
 				}
-                
-                if( !this.SpellChecker.check( token ) )
-                {
-                    // console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
-                    
-                    let lineRange = new vscode.Range( linenumber, colnumber, linenumber, colnumber + token.length );
+				
+				if( !this.SpellChecker.check( token ) )
+				{
+					// console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
+					
+					let lineRange = new vscode.Range( linenumber, colnumber, linenumber, colnumber + token.length );
 					
 					// Make sure word isn't in the ignore list
 					if( this.settings.ignoreWordsList.indexOf( token ) < 0 )
@@ -199,20 +199,20 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 							this.problemCollection[ token ] = message;
 						}
 					}
-                }
-            }
-        }
-        // console.log( diagnostics );
-        this.diagnosticCollection.set( textDocument.uri, diagnostics );
+				}
+			}
+		}
+		// console.log( diagnostics );
+		this.diagnosticCollection.set( textDocument.uri, diagnostics );
 		// create local copy so it can be updated
 		this.diagnosticMap[ textDocument.uri.toString() ] = diagnostics;
 		
-        let endTime = new Date().getTime();
-        let minutes = ( endTime - startTime ) / 1000;
+		let endTime = new Date().getTime();
+		let minutes = ( endTime - startTime ) / 1000;
 		if( DEBUG )
-        {
+		{
 			console.log( 'Check completed in ' + String( minutes ) );
-        	console.log( 'Found ' + String( diagnostics.length ) + ' errors' );
+			console.log( 'Found ' + String( diagnostics.length ) + ' errors' );
 		}
 	}
 
@@ -241,7 +241,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			text = text.replace( regex, ' ' );	
 
 
-    	}
+		}
 
 		return text;
 	}
@@ -262,12 +262,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			return undefined;
 		
 		// Get suggestions
-        match = diagnostic.message.match( /\[\ ([a-zA-Z0-9,\ ]+)\ \]$/ );
-        let suggestionstring:string = '';
+		match = diagnostic.message.match( /\[\ ([a-zA-Z0-9,\ ]+)\ \]$/ );
+		let suggestionstring:string = '';
 		
 		let commands:vscode.Command[] = [];
-        
-        if( match && match.length >= 2 )
+		
+		if( match && match.length >= 2 )
 		{
 			suggestionstring = match[ 1 ];
 			
@@ -294,7 +294,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	}
 	
 	private fixSuggestionCodeAction( document: vscode.TextDocument, diagnostic:vscode.Diagnostic, word:string, suggestion:string ): any
-    {
+	{
 		let docWord:string = document.getText( diagnostic.range );
 		
 		if( word == docWord )
@@ -343,27 +343,27 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		
 		return false;
 	}
-    
-    public setLanguage( language: string = 'en_US' ): void
-    {
-        // console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
-        this.settings.language = language;
-        this.DICT = this.SpellChecker.parse(
-            {
-                aff: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.aff' ) ),
-                dic: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.dic' ) )
-            });
-            
-        this.SpellChecker.use( this.DICT );
-    }
+	
+	public setLanguage( language: string = 'en_US' ): void
+	{
+		// console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
+		this.settings.language = language;
+		this.DICT = this.SpellChecker.parse(
+			{
+				aff: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.aff' ) ),
+				dic: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.dic' ) )
+			});
+			
+		this.SpellChecker.use( this.DICT );
+	}
 
 	public getDocumentTypes(): string[]
 	{
 		return this.settings.documentTypes;
 	}
 
-    private getSettings() : SpellSettings
-    {
+	private getSettings() : SpellSettings
+	{
 		if( SpellCheckerProvider.CONFIGFILE.length == 0 )
 		{
 			SpellCheckerProvider.CONFIGFILE = path.join( vscode.workspace.rootPath, '.vscode', 'spellchecker.json' );
@@ -393,5 +393,5 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				ignoreRegExp: []
 			};
 		}
-    }
+	}
 }
