@@ -80,6 +80,8 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.1.4`:
+	* Fixed error with tab characters not being removed from text
 * `v1.1.3`:
 	* Fixed error in parsing quotation marks at the beginning of words
 * `v1.1.1`:
