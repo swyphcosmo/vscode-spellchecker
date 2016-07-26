@@ -188,6 +188,13 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
+		// convert tabs to spaces
+		text = text.replace( /\t/g, ' ' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 
 		let lastposition = 0;
 		let position = 0;
