@@ -104,30 +104,90 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		
 		// remove pandoc yaml header
 		text = text.replace( /---(.|\n)*\.\.\./g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove '&nbsp;'
 		text = text.replace( /&nbsp;/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove citations
 		text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, '' );
 		text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove code blocks
 		text = text.replace( /^(```\s*)(\w+)?(\s*[\w\W]+?\n*)(```\s*)\n*$/gm, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove inline code blocks
 		text = text.replace( /`[\w\W]+?`/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove image links
 		// text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
 		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove web links
 		text = text.replace( /(http|https|ftp|git)\S*/g, '' )
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove email addresses 
 		text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove non-letter characters
 		text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-]/g, ' ' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove numbers:
 		text = text.replace( / [0-9]+/g, ' ' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove leading quotations
-		text = text.replace( /[\s ]['"]([a-zA-Z])/g, '$1' );
+		text = text.replace( /[\s ]['"]([a-zA-Z])/g, ' $1' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 		// remove trailing quotations
 		text = text.replace( /' /g, ' ' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 
 		let lastposition = 0;
 		let position = 0;
@@ -152,7 +212,10 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				{
 					lastposition = 0;
 					linenumber++;
-					position = lines[ linenumber ].indexOf( token, lastposition );
+					if( linenumber < lines.length )
+						position = lines[ linenumber ].indexOf( token, lastposition );
+					else
+						console.log( 'Error text not found: ' + token );
 				}
 				
 				colnumber = position;
