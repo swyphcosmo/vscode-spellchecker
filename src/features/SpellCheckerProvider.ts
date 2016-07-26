@@ -175,7 +175,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( '------------------------------------------' );
 		}
 		// remove leading quotations
-		text = text.replace( /[\s ]['"]([a-zA-Z])/g, ' $1' );
+		text = text.replace( /[\s ]['"]([a-zA-Z0-9])/g, ' $1' );
 		if( DEBUG )
 		{
 			console.log( text );
