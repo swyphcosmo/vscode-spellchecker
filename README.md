@@ -40,6 +40,7 @@ The following settings can be changed:
 	* `"/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"`: remove links to image and markdown files
 	* `"/((http|https|ftp|git)\\\\S*)/g"`: remove hyperlinks
 	* `"/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"`: remove code blocks
+* `ignoreFileExtensions`: an array of file extensions that will not be spell checked
 
 Additional sections are already removed from files, including:
 
@@ -80,6 +81,9 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.1.6`:
+	* Words under 50 characters in length will be checked for suggestions. The longest English word is 45 characters.
+	* Add setting `ignoreFileExtensions` to ignore spell checking on files with certain extensions
 * `v1.1.5`:
 	* Fixed parsing leading quotation marks didn't work when the marks were in front of a number
 * `v1.1.4`:

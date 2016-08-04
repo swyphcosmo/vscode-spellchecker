@@ -13,6 +13,7 @@ interface SpellSettings {
 	ignoreWordsList: string[];
 	documentTypes: string[];
 	ignoreRegExp: string[];
+	ignoreFileExtensions: string[];
 }
 
 export default class SpellCheckerProvider implements vscode.CodeActionProvider 
@@ -62,7 +63,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		// register code actions provider
 		for( let i = 0; i < this.settings.documentTypes.length; i++ )
-	   		vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
+			vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
 	}
 
 	public dispose(): void
@@ -82,8 +83,15 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		if( DEBUG )
 			console.log( textDocument.languageId );
-			
+		
+		// Is this a document type that we should check?
 		if( this.settings.documentTypes.indexOf( textDocument.languageId ) < 0 )
+		{
+			return;
+		}
+
+		// Is this a file extension that we should ignore?
+		if( this.settings.ignoreFileExtensions.indexOf( path.extname( textDocument.fileName ) ) >= 0 )
 		{
 			return;
 		}
@@ -235,7 +243,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				
 				if( !this.SpellChecker.check( token ) )
 				{
-					// console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
+					if( DEBUG )
+						console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
 					
 					let lineRange = new vscode.Range( linenumber, colnumber, linenumber, colnumber + token.length );
 					
@@ -251,16 +260,21 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 						else
 						{              
 							let message = 'Spelling [ ' + token + ' ]: suggestions [ ';
-							let suggestions = this.SpellChecker.suggest( token );
-							for( let s of suggestions )
+
+							if( token.length < 50 )
 							{
-								message += s + ', ';
+								let suggestions = this.SpellChecker.suggest( token );
+								for( let s of suggestions )
+								{
+									message += s + ', ';
+								}
+								if( suggestions.length > 0 )
+									message = message.slice( 0, message.length - 3 );
 							}
-							if( suggestions.length > 0 )
-								message = message.slice( 0, message.length - 3 );
 							message += ' ]';
 							
-							// console.log( message );
+							if( DEBUG )
+								console.log( message );
 
 							let diag = new vscode.Diagnostic( lineRange, message, vscode.DiagnosticSeverity.Error );
 							diag.source = 'Spell Checker';
@@ -272,7 +286,6 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				}
 			}
 		}
-		// console.log( diagnostics );
 		this.diagnosticCollection.set( textDocument.uri, diagnostics );
 		// create local copy so it can be updated
 		this.diagnosticMap[ textDocument.uri.toString() ] = diagnostics;
@@ -309,7 +322,6 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				console.log( text.match( regex ) );
 			
 			text = text.replace( regex, ' ' );	
-
 
 		}
 
@@ -460,7 +472,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				language: 'en_US',
 				ignoreWordsList: [],
 				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
-				ignoreRegExp: []
+				ignoreRegExp: [],
+				ignoreFileExtensions: []
 			};
 		}
 	}
