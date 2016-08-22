@@ -203,6 +203,20 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
+		// remove LaTeX commands
+		text = text.replace( /\\\w*{.*?}/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
+		// remove LaTeX non-breaking spaces
+		text = text.replace( /\\~/g, '' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
 
 		let lastposition = 0;
 		let position = 0;
