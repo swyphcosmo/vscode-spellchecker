@@ -14,5 +14,6 @@
     ],
     "ignoreFileExtensions": [
         ".env"
-    ]
+    ],
+    "checkInterval": 5000
 }
