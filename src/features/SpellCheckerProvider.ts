@@ -46,7 +46,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		this.settings = this.getSettings();
 		this.setLanguage( this.settings.language );
 
-		// vscode.commands.registerCommand( 'spellchecker.suggest', Suggest );
+		vscode.commands.registerCommand( 'spellchecker.createSettingsFile', this.createSettingsFile, this );
 		// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
 
 		this.suggestCommand = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
@@ -80,6 +80,23 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		this.suggestCommand.dispose();
 		this.ignoreCommand.dispose();
 		this.alwaysIgnoreCommand.dispose();
+	}
+
+	private createSettingsFile(): void
+	{
+		if( SpellCheckerProvider.CONFIGFILE.length > 0 && !fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
+		{
+			let defaultSettings: SpellSettings = {
+				language: 'en_US',
+				ignoreWordsList: [],
+				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
+				ignoreRegExp: [],
+				ignoreFileExtensions: [],
+				checkInterval: 5000
+			};
+
+			this.saveWorkspaceSettings( defaultSettings );
+		}
 	}
 
 	private doDiffSpellCheck( event:vscode.TextDocumentChangeEvent )

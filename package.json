@@ -15,7 +15,12 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [],
+        "commands": [
+            {
+                "command": "spellchecker.createSettingsFile",
+                "title": "Create Spell Checker Settings File"
+            }
+        ],
         "keybindings": []
     },
     "scripts": {
