@@ -193,7 +193,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( '------------------------------------------' );
 		}
 		// remove non-letter characters
-		text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-]/g, ' ' );
+		text = text.replace( /[`\"!#$%&()*+,.\/:;<=>?@\[\]\\^_{|}\n\r\-~]/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -222,6 +222,13 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 		// convert tabs to spaces
 		text = text.replace( /\t/g, ' ' );
+		if( DEBUG )
+		{
+			console.log( text );
+			console.log( '------------------------------------------' );
+		}
+		// remove LaTeX commands
+		text = text.replace( /\\\w*\{.*?\}/g, '' );
 		if( DEBUG )
 		{
 			console.log( text );
