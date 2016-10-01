@@ -86,6 +86,10 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.1`:
+	* Fixed some regex's mangling text parsing by replacing spaces instead of null.
+	* Fixed error with creating settings file to `.vscode` folder that doesn't exist.
+	* Added command to show current documentType to make it easier to add new types to check.
 * `v1.2.0`:
 	* Fixed files not being opened when workspace was not opened.
 	* Added `checkInterval` setting so that spelling isn't checked with every edit but rather after a specified interval.

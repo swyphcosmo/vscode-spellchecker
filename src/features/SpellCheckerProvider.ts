@@ -3,6 +3,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+let mkdirp = require( 'mkdirp' );
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 
 // Toggle debug output
@@ -47,6 +48,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		this.setLanguage( this.settings.language );
 
 		vscode.commands.registerCommand( 'spellchecker.createSettingsFile', this.createSettingsFile, this );
+		vscode.commands.registerCommand( 'spellchecker.showDocumentType', this.showDocumentType, this );
 		// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
 
 		this.suggestCommand = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
@@ -96,6 +98,18 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			};
 
 			this.saveWorkspaceSettings( defaultSettings );
+		}
+	}
+
+	private showDocumentType(): void
+	{
+		if( vscode.workspace.textDocuments.length > 0 )
+		{
+			vscode.window.showInformationMessage( 'The documentType for the current file is \'' + vscode.workspace.textDocuments[ 0 ].languageId + '\'.' );
+		}
+		else
+		{
+			vscode.window.showErrorMessage( 'documentType not found.' );
 		}
 	}
 
@@ -152,36 +166,36 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		text = this.processUserIgnoreRegex( text );
 
 		// remove pandoc yaml header
-		text = text.replace( /---(.|\n)*\.\.\./g, '' );
+		text = text.replace( /---(.|\n)*\.\.\./g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove '&nbsp;'
-		text = text.replace( /&nbsp;/g, '' );
+		text = text.replace( /&nbsp;/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove citations
-		text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, '' );
-		text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, '' );
+		text = text.replace( /\[-?@[A-Za-z:0-9\-]*\]/g, ' ' );
+		text = text.replace( /\{(\#|\.)[A-Za-z:0-9]+\}/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove code blocks
-		text = text.replace( /^(```\s*)(\w+)?(\s*[\w\W]+?\n*)(```\s*)\n*$/gm, '' );
+		text = text.replace( /^(```\s*)(\w+)?(\s*[\w\W]+?\n*)(```\s*)\n*$/gm, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove inline code blocks
-		text = text.replace( /`[\w\W]+?`/g, '' );
+		text = text.replace( /`[\w\W]+?`/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -189,21 +203,21 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 		// remove image links
 		// text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
-		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, '' );
+		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove web links
-		text = text.replace( /(http|https|ftp|git)\S*/g, '' )
+		text = text.replace( /(http|https|ftp|git)\S*/g, ' ' )
 		if( DEBUG )
 		{
 			console.log( text );
 			console.log( '------------------------------------------' );
 		}
 		// remove email addresses 
-		text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, '' );
+		text = text.replace( /[a-zA-Z.\-0-9]+@[a-z.]+/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -245,7 +259,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( '------------------------------------------' );
 		}
 		// remove LaTeX commands
-		text = text.replace( /\\\w*\{.*?\}/g, '' );
+		text = text.replace( /\\\w*\{.*?\}/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -624,6 +638,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		if( SpellCheckerProvider.CONFIGFILE.length > 0 )
 		{
+			console.log( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
+			mkdirp.sync( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
 			fs.writeFileSync( SpellCheckerProvider.CONFIGFILE, JSON.stringify( settings, null, 4 ) );
 		}
 	}
