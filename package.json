@@ -2,7 +2,7 @@
     "name": "spellchecker",
     "displayName": "SpellChecker",
     "description": "Offline spell checker",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "publisher": "swyphcosmo",
     "engines": {
         "vscode": "^1.0.0"
