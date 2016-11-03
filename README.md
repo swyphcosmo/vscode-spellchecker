@@ -86,6 +86,10 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.2`:
+	* Only process files with `uri.scheme = 'file'` (See #15)
+	* Find suggestions for words that do not contain numbers (See #15)
+	* Added GB English dictionary (#12)
 * `v1.2.1`:
 	* Fixed some regex's mangling text parsing by replacing spaces instead of null.
 	* Fixed error with creating settings file to `.vscode` folder that doesn't exist.

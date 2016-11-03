@@ -115,6 +115,18 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 	private doDiffSpellCheck( event:vscode.TextDocumentChangeEvent )
 	{
+		// Is this a document type that we should check?
+		if( this.settings.documentTypes.indexOf( event.document.languageId ) < 0 )
+		{
+			return;
+		}
+
+		// Is this a file extension that we should ignore?
+		if( this.settings.ignoreFileExtensions.indexOf( path.extname( event.document.fileName ) ) >= 0 )
+		{
+			return;
+		}
+
 		if( Date.now() - this.lastcheck > this.settings.checkInterval )
 		{
 			clearTimeout( this.timer );
@@ -136,7 +148,16 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 
 		if( DEBUG )
-			console.log( textDocument.languageId );
+			console.log( "documentType for " + textDocument.fileName + " is " + textDocument.languageId );
+
+		if( DEBUG )
+			console.log( textDocument );
+
+		// Is this a private URI? (VSCode started having "private:" versions of non-plaintext documents with languageId = 'plaintext')
+		if( textDocument.uri.scheme != "file" )
+		{
+			return;
+		}
 
 		// Is this a document type that we should check?
 		if( this.settings.documentTypes.indexOf( textDocument.languageId ) < 0 )
@@ -334,8 +355,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 						else
 						{
 							let message = 'Spelling [ ' + token + ' ]: suggestions [ ';
-
-							if( token.length < 50 )
+							let containsNumber = token.match( /[0-9]+/g );
+							
+							if( token.length < 50 && containsNumber == null )
 							{
 								let suggestions = this.SpellChecker.suggest( token );
 								for( let s of suggestions )
