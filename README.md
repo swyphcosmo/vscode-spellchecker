@@ -33,7 +33,7 @@ An example configuration file can be found [here](https://github.com/swyphcosmo/
 
 The following settings can be changed:
 
-* `language`: currently the only supported language is US English so the only valid value is `"en_US"`
+* `language`: currently the only supported language is English so the only valid values are `"en_US"` or `"en_GB-ise"`
 * `ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `ignoreFileExtensions`: an array of file extensions that will not be spell checked
