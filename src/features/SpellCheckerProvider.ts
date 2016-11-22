@@ -88,6 +88,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		if( SpellCheckerProvider.CONFIGFILE.length > 0 && !fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
 		{
+			console.log( 'Spell checker configuration file not found' );
+			console.log( 'Creating file \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
+
 			let defaultSettings: SpellSettings = {
 				language: 'en_US',
 				ignoreWordsList: [],
@@ -98,6 +101,16 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			};
 
 			this.saveWorkspaceSettings( defaultSettings );
+		}
+		else if( fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
+		{
+			console.log( 'Spell checker configuration file already exists' );
+			console.log( 'Contents of \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
+			console.log( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) );
+		}
+		else
+		{
+			console.log( 'Invalid Spell checker configuration file name: \'' +  + SpellCheckerProvider.CONFIGFILE + '\'' );
 		}
 	}
 
@@ -660,9 +673,17 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		if( SpellCheckerProvider.CONFIGFILE.length > 0 )
 		{
+			console.log( 'Saving spell check configuration' );
 			console.log( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
-			mkdirp.sync( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
-			fs.writeFileSync( SpellCheckerProvider.CONFIGFILE, JSON.stringify( settings, null, 4 ) );
+			try
+			{
+				mkdirp.sync( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
+				fs.writeFileSync( SpellCheckerProvider.CONFIGFILE, JSON.stringify( settings, null, 4 ) );
+			}
+			catch( e )
+			{
+				console.log( e );
+			}
 		}
 	}
 
