@@ -86,6 +86,9 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.4`:
+	* add svg and pdf to ignoreRegExp (#16, Thanks [wingsuitist](https://github.com/wingsuitist))
+	* Fixed wrong/incomplete comment removal in settings (#20, Thanks [devjb](https://github.com/devjb))
 * `v1.2.3`:
 	* Adding extra output to configuration file creation to help track down errors during this process
 * `v1.2.2`:

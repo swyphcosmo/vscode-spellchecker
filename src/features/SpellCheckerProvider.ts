@@ -238,7 +238,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 		// remove image links
 		// text = text.replace( /\]\([a-zA-Z0-9\/\\\.]+\)/g, ' ' );
-		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif)\)/gi, ' ' );
+		text = text.replace( /\(.*\.(jpg|jpeg|png|md|gif|pdf|svg)\)/gi, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -644,7 +644,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			let userSettingsFile: string = fs.readFileSync( userSettingsFilename, 'utf-8' );
 
 			// parse and remove any comment lines in the settings file
-			return JSON.parse( jsonMinify( userSettingsFile) );
+			return JSON.parse( jsonMinify( userSettingsFile ) );
 		}
 		else
 			return null;
@@ -714,7 +714,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		if( SpellCheckerProvider.CONFIGFILE.length > 0 && fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
 		{
-			let settings: SpellSettings = JSON.parse( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) );
+			let settings: SpellSettings = JSON.parse( jsonMinify( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) ) );
 
 			if( DEBUG )
 			{
