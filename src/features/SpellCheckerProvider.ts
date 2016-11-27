@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 let mkdirp = require( 'mkdirp' );
 let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
+let jsonMinify = require( 'jsonminify' );
 
 // Toggle debug output
 let DEBUG:boolean = false;
@@ -642,14 +643,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		{
 			let userSettingsFile: string = fs.readFileSync( userSettingsFilename, 'utf-8' );
 
-			// remove any comment lines
-			while( userSettingsFile[ 0 ] == '/' )
-			{
-				let userSettingsFileTokens: string[] = userSettingsFile.split( '\n' );
-				delete userSettingsFileTokens[ 0 ];
-				userSettingsFile = userSettingsFileTokens.join( '\n' );
-			}
-			return JSON.parse( userSettingsFile );
+			// parse and remove any comment lines in the settings file
+			return JSON.parse( jsonMinify( userSettingsFile) );
 		}
 		else
 			return null;
