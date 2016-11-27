@@ -8,7 +8,7 @@
         "plaintext"
     ],
     "ignoreRegExp": [
-        "/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g",
+        "/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|svg|pdf|PDF|SVG|JPG|JPEG|PNG|MD|GIF)\\\\)/g",
         "/((http|https|ftp|git)\\\\S*)/g",
         "/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"
     ],
