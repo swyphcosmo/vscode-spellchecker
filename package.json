@@ -1,52 +1,52 @@
 {
-	"name": "spellchecker",
-	"displayName": "SpellChecker",
-	"description": "Offline spell checker",
-	"version": "1.2.3",
-	"publisher": "swyphcosmo",
-	"engines": {
-		"vscode": "^1.0.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"commands": [
-			{
-				"command": "spellchecker.createSettingsFile",
-				"title": "Create Spell Checker Settings File"
-			},
-			{
-				"command": "spellchecker.showDocumentType",
-				"title": "Show documentType for Current File"
-			}
-		],
-		"keybindings": []
-	},
-	"scripts": {
-		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install"
-	},
-	"devDependencies": {
-		"typescript": "^1.8.10",
-		"vscode": "^0.11.0"
-	},
-	"dependencies": {
-		"fs": "0.0.1-security",
-		"jsonminify": "^0.4.1",
-		"mkdirp": "^0.5.1",
-		"npm": "^4.0.2",
-		"path": "^0.12.7",
-		"typescript": "^1.8.10"
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/swyphcosmo/vscode-spellchecker.git"
-	}
+    "name": "spellchecker",
+    "displayName": "SpellChecker",
+    "description": "Offline spell checker",
+    "version": "1.2.4",
+    "publisher": "swyphcosmo",
+    "engines": {
+        "vscode": "^1.0.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "spellchecker.createSettingsFile",
+                "title": "Create Spell Checker Settings File"
+            },
+            {
+                "command": "spellchecker.showDocumentType",
+                "title": "Show documentType for Current File"
+            }
+        ],
+        "keybindings": []
+    },
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "typescript": "^1.8.10",
+        "vscode": "^0.11.0"
+    },
+    "dependencies": {
+        "fs": "0.0.1-security",
+        "jsonminify": "^0.4.1",
+        "mkdirp": "^0.5.1",
+        "npm": "^4.0.2",
+        "path": "^0.12.7",
+        "typescript": "^1.8.10"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/swyphcosmo/vscode-spellchecker.git"
+    }
 }
