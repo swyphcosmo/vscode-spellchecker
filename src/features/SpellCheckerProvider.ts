@@ -624,12 +624,15 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 	private getUserSettingsFilename(): string
 	{
+		let codeFolder = 'Code';
+		if( vscode.version.indexOf( 'insider' ) >= 0 )
+			codeFolder = 'Code - Insiders';
 		if( process.platform == 'win32' )
-			return path.join( process.env.APPDATA, 'Code', 'User', 'settings.json' );
+			return path.join( process.env.APPDATA, codeFolder, 'User', 'settings.json' );
 		else if( process.platform == 'darwin' )
-			return path.join( process.env.HOME, 'Library', 'Application Support', 'Code', 'User', 'settings.json' );
+			return path.join( process.env.HOME, 'Library', 'Application Support', codeFolder, 'User', 'settings.json' );
 		else if( process.platform == 'linux' )
-			return path.join( process.env.HOME, '.config', 'Code', 'User', 'settings.json' );
+			return path.join( process.env.HOME, '.config', codeFolder, 'User', 'settings.json' );
 		else
 			return "";
 	}
@@ -641,13 +644,16 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		if( userSettingsFilename.length > 0 )
 		{
-			let userSettingsFile: string = fs.readFileSync( userSettingsFilename, 'utf-8' );
+			if( fs.existsSync( userSettingsFilename ) )
+			{
+				let userSettingsFile: string = fs.readFileSync( userSettingsFilename, 'utf-8' );
 
-			// parse and remove any comment lines in the settings file
-			return JSON.parse( jsonMinify( userSettingsFile ) );
+				// parse and remove any comment lines in the settings file
+				return JSON.parse( jsonMinify( userSettingsFile ) );
+			}
 		}
-		else
-			return null;
+		
+		return null;
 	}
 
 	private saveUserSettings( settings ): boolean
