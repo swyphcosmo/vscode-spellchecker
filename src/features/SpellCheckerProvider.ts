@@ -451,7 +451,15 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		let diagnostic:vscode.Diagnostic = context.diagnostics[ 0 ];
 
 		// Get word
-		let match:string[] = diagnostic.message.match( /\[\ ([a-zA-Z0-9]+)\ \]\:/ );
+		let match:string[] = diagnostic.message.match( /^Spelling \[\ (.+)\ \]\:/ );
+		if( DEBUG )
+		{
+			console.log( 'Code action: match word' );
+			match.forEach( function( m )
+			{
+				console.log( m );
+			});
+		}
 		let word:string = '';
 
 		// should always be true
@@ -462,7 +470,15 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			return undefined;
 
 		// Get suggestions
-		match = diagnostic.message.match( /\[\ ([a-zA-Z0-9,\ ]+)\ \]$/ );
+		match = diagnostic.message.match( /suggestions \[\ (.+)\ \]$/ );
+		if( DEBUG )
+		{
+			console.log( 'Code action: match suggestions' );
+			match.forEach( function( m )
+			{
+				console.log( m );
+			});
+		}
 		let suggestionstring:string = '';
 
 		let commands:vscode.Command[] = [];
@@ -540,6 +556,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 	private alwaysIgnoreCodeAction( document: vscode.TextDocument, word: string ): any
 	{
+		if( DEBUG )
+		{
+			console.log( word );
+			console.log( document );
+			console.log( Object.keys( document ) );
+		}
 		if( this.addWordToAlwaysIgnoreList( word ) )
 		{
 			this.doSpellCheck( document );
