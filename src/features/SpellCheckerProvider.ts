@@ -8,7 +8,7 @@ let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 let jsonMinify = require( 'jsonminify' );
 
 // Toggle debug output
-let DEBUG:boolean = true;
+let DEBUG:boolean = false;
 
 interface SpellSettings {
 	language: string,

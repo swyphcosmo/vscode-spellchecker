@@ -86,7 +86,7 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
-* `v1.2.7`:
+* `v1.2.8`:
 	* Fixed bug introduced by context menu changes when there are no suggested spellings.
 * `v1.2.6`:
 	* Added Spanish dictionary, es_ANY. Thanks [jmalarcon](https://github.com/jmalarcon)
