@@ -8,7 +8,7 @@ let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
 let jsonMinify = require( 'jsonminify' );
 
 // Toggle debug output
-let DEBUG:boolean = false;
+let DEBUG:boolean = true;
 
 interface SpellSettings {
 	language: string,
@@ -450,9 +450,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		let diagnostic:vscode.Diagnostic = context.diagnostics[ 0 ];
 
+		if( !diagnostic )
+			return null;
+
 		// Get word
 		let match:string[] = diagnostic.message.match( /^Spelling \[\ (.+)\ \]\:/ );
-		if( DEBUG )
+		if( DEBUG && match )
 		{
 			console.log( 'Code action: match word' );
 			match.forEach( function( m )
@@ -471,7 +474,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		// Get suggestions
 		match = diagnostic.message.match( /suggestions \[\ (.+)\ \]$/ );
-		if( DEBUG )
+		if( DEBUG && match )
 		{
 			console.log( 'Code action: match suggestions' );
 			match.forEach( function( m )
