@@ -33,7 +33,7 @@ An example configuration file can be found [here](https://github.com/swyphcosmo/
 
 The following settings can be changed:
 
-* `language`: currently the only supported language is English so the only valid values are `"en_US"`, `"en_GB-ise"` or `"es_ANY` for Spanish.
+* `language`: supported languages are English (`"en_US"` or `"es_GB-ise"`) and Spanish (`"es_ANY"`).
 * `ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `ignoreFileExtensions`: an array of file extensions that will not be spell checked
@@ -86,10 +86,13 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.6`:
+	* Added Spanish dictionary, es_ANY. Thanks [jmalarcon](https://github.com/jmalarcon)
+	* Fixed context menu not handling special characters in suggestions (#25)
 * `v1.2.5`:
 	* Detect Insider version for different user settings file.
 * `v1.2.4`:
-	* Add svg and pdf to ignoreRegExp (#16, Thanks [wingsuitist](https://github.com/wingsuitist))
+	* Add svg and pdf to `ignoreRegExp` (#16, Thanks [wingsuitist](https://github.com/wingsuitist))
 	* Fixed wrong/incomplete comment removal in settings (#20, Thanks [devjb](https://github.com/devjb))
 * `v1.2.3`:
 	* Adding extra output to configuration file creation to help track down errors during this process
@@ -100,7 +103,7 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 * `v1.2.1`:
 	* Fixed some regex's mangling text parsing by replacing spaces instead of null.
 	* Fixed error with creating settings file to `.vscode` folder that doesn't exist.
-	* Added command to show current documentType to make it easier to add new types to check.
+	* Added command to show current `documentType` to make it easier to add new types to check.
 * `v1.2.0`:
 	* Fixed files not being opened when workspace was not opened.
 	* Added `checkInterval` setting so that spelling isn't checked with every edit but rather after a specified interval.
