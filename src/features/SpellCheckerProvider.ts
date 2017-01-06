@@ -379,7 +379,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 									message += s + ', ';
 								}
 								if( suggestions.length > 0 )
-									message = message.slice( 0, message.length - 3 );
+									message = message.slice( 0, message.length - 2 );
 							}
 							message += ' ]';
 

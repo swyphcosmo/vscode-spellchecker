@@ -86,6 +86,8 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.9`:
+	* Fixed #28. The last character of the last suggestion was being cut off.
 * `v1.2.8`:
 	* Fixed bug introduced by context menu changes when there are no suggested spellings.
 * `v1.2.6`:
