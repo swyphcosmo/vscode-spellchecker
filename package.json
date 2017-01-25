@@ -30,6 +30,7 @@
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
         "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "preinstall": "git submodule update --init --recursive # installs lib/hunspell-spellchecker",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
