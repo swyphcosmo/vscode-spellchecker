@@ -6,14 +6,16 @@
 
 # Offline French Spell Checker
 
-[![Current Version](http://vsmarketplacebadge.apphb.com/version/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
-[![Install Count](http://vsmarketplacebadge.apphb.com/installs/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
+[![Current Version](http://vsmarketplacebadge.apphb.com/version/adrienjoly.vscode-spellchecker-fr.svg)](https://marketplace.visualstudio.com/items?itemName=adrienjoly.vscode-spellchecker-fr)
+[![Install Count](http://vsmarketplacebadge.apphb.com/installs/adrienjoly.vscode-spellchecker-fr.svg)](https://marketplace.visualstudio.com/items?itemName=adrienjoly.vscode-spellchecker-fr)
 
 ## Description 
 
-This extension is a spell checker that uses a local dictionary for offline usage. Atom's [node-spellchecker module](https://github.com/atom/node-spellchecker) is used to load NSSpellChecker, Hunspell, or the Windows 8 Spell Check API, depending on your platform. Errors are highlighted, and hovering over them will show possible suggestions.
+This extension is a spell checker that works offline, using Atom's [node-spellchecker module](https://github.com/atom/node-spellchecker). Errors are highlighted, and hovering over them will show possible suggestions.
 
-This extension can be found on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker).
+It uses NSSpellChecker, Hunspell, or the Windows 8 Spell Check API, depending on your platform.
+
+This extension can be found on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=adrienjoly.vscode-spellchecker-fr).
 
 ## Functionality
 
