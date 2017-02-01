@@ -1,9 +1,9 @@
 {
-  "name": "spellchecker",
-  "displayName": "SpellChecker",
-  "description": "Offline spell checker",
+  "name": "vscode-spellchecker-fr",
+  "displayName": "French spell checker",
+  "description": "(in development) A spell checker for the French language, works offline.",
   "version": "1.2.9",
-  "publisher": "swyphcosmo",
+  "publisher": "adrienjoly",
   "engines": {
     "vscode": "^1.0.0"
   },
@@ -51,6 +51,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/swyphcosmo/vscode-spellchecker.git"
+    "url": "https://github.com/adrienjoly/vscode-spellchecker.git"
   }
 }
