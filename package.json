@@ -1,56 +1,56 @@
 {
-    "name": "spellchecker",
-    "displayName": "SpellChecker",
-    "description": "Offline spell checker",
-    "version": "1.2.9",
-    "publisher": "swyphcosmo",
-    "engines": {
-        "vscode": "^1.0.0"
-    },
-    "categories": [
-        "Other"
+  "name": "spellchecker",
+  "displayName": "SpellChecker",
+  "description": "Offline spell checker",
+  "version": "1.2.9",
+  "publisher": "swyphcosmo",
+  "engines": {
+    "vscode": "^1.0.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "spellchecker.createSettingsFile",
+        "title": "Create Spell Checker Settings File"
+      },
+      {
+        "command": "spellchecker.showDocumentType",
+        "title": "Show documentType for Current File"
+      }
     ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "commands": [
-            {
-                "command": "spellchecker.createSettingsFile",
-                "title": "Create Spell Checker Settings File"
-            },
-            {
-                "command": "spellchecker.showDocumentType",
-                "title": "Show documentType for Current File"
-            }
-        ],
-        "keybindings": []
-    },
-    "scripts": {
-        "test": "npm rebuild && node test.js",
-        "build-for-vscode": "./node_modules/.bin/electron-rebuild -v 1.4.6",
-        "vscode:prepublish": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile",
-        "compile": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "devDependencies": {
-        "electron-rebuild": "^1.5.7",
-        "typescript": "^1.8.10",
-        "vscode": "^0.11.0"
-    },
-    "dependencies": {
-        "fs": "0.0.1-security",
-        "jsonminify": "^0.4.1",
-        "mkdirp": "^0.5.1",
-        "npm": "^4.0.2",
-        "path": "^0.12.7",
-        "spellchecker": "^3.3.1",
-        "typescript": "^1.8.10"
-    },
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/swyphcosmo/vscode-spellchecker.git"
-    }
+    "keybindings": []
+  },
+  "scripts": {
+    "test": "npm rebuild && node test.js",
+    "build-for-vscode": "./node_modules/.bin/electron-rebuild -v 1.4.6",
+    "vscode:prepublish": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile",
+    "compile": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.5.7",
+    "typescript": "^1.8.10",
+    "vscode": "^0.11.0"
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "jsonminify": "^0.4.1",
+    "mkdirp": "^0.5.1",
+    "npm": "^4.0.2",
+    "path": "^0.12.7",
+    "spellchecker": "^3.3.1",
+    "typescript": "^1.8.10"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swyphcosmo/vscode-spellchecker.git"
+  }
 }
