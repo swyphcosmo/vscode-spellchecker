@@ -1,5 +1,9 @@
 **WARNING**: Early development version, forked from [swyphcosmo's vscode-spellchecker](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker), for French language support ([as discussed there](https://github.com/swyphcosmo/vscode-spellchecker/issues/31)). Only tested on Mac OS X, so far. Some parts of code may be unnecessary, and some parts of documentation irrelevant.
 
+> [Switching from the Hunspell submodule to Atom's node-spellcheck npm module](https://github.com/adrienjoly/vscode-spellchecker/commit/66b18efbc513265580f34d041da0a29d58c3eba5) solved my French spelling problems, and runs much faster.
+> 
+> One drawback is that the extension needs to be compiled separately for each platform, because [Atom's node-spellcheck npm module](https://github.com/atom/node-spellchecker) is a native module. And I had to use [electron-rebuild](https://github.com/electron/electron/blob/master/docs/tutorial/using-native-node-modules.md#the-easy-way) in order to compile accordingly to [VSCode's Electron version](https://code.visualstudio.com/docs/extensions/patterns-and-principles#_common-questions).
+
 # Offline Spell Checker
 
 [![Current Version](http://vsmarketplacebadge.apphb.com/version/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
