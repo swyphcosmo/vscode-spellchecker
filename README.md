@@ -1,3 +1,5 @@
+**WARNING**: Early development version, forked from [swyphcosmo's vscode-spellchecker](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker), for French language support ([as discussed there](https://github.com/swyphcosmo/vscode-spellchecker/issues/31)). Only tested on Mac OS X, so far. Some parts of code may be unnecessary, and some parts of documentation irrelevant.
+
 # Offline Spell Checker
 
 [![Current Version](http://vsmarketplacebadge.apphb.com/version/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
@@ -5,7 +7,7 @@
 
 ## Description 
 
-This extension is a spell checker that uses a local dictionary for offline usage. [hunspell-spellchecker](https://github.com/GitbookIO/hunspell-spellchecker) is used to load hunspell formatted dictionaries. Errors are highlighted, and hovering over them will show possible suggestions. The `suggest` function was modified according to [https://github.com/GitbookIO/hunspell-spellchecker/pull/7] to speed up word suggestions.
+This extension is a spell checker that uses a local dictionary for offline usage. Atom's [node-spellchecker module](https://github.com/atom/node-spellchecker) is used to load NSSpellChecker, Hunspell, or the Windows 8 Spell Check API, depending on your platform. Errors are highlighted, and hovering over them will show possible suggestions.
 
 This extension can be found on the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker).
 
@@ -29,11 +31,11 @@ You can correct the error by clicking on the Quick Fix (light bulb) icon.
 
 You can configure the operation of this extension by placing a file called `spellchecker.json` into your workspace's `.vscode` folder.
 
-An example configuration file can be found [here](https://github.com/swyphcosmo/vscode-spellchecker/blob/master/settings/spellchecker.json). 
+An example configuration file can be found [here](https://github.com/swyphcosmo/vscode-spellchecker/blob/samples/en/.vscode/spellchecker.json). 
 
 The following settings can be changed:
 
-* `language`: supported languages are English (`"en_US"` or `"es_GB-ise"`) and Spanish (`"es_ANY"`).
+* `language`: tested languages are English (`"en_US"`) and French (`"fr"`).
 * `ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `ignoreFileExtensions`: an array of file extensions that will not be spell checked
