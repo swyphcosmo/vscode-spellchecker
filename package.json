@@ -28,12 +28,14 @@
         "keybindings": []
     },
     "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "preinstall": "git submodule update --init --recursive # installs lib/hunspell-spellchecker",
+        "test": "npm rebuild && node test.js",
+        "build-for-vscode": "./node_modules/.bin/electron-rebuild -v 1.4.6",
+        "vscode:prepublish": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile",
+        "compile": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
+        "electron-rebuild": "^1.5.7",
         "typescript": "^1.8.10",
         "vscode": "^0.11.0"
     },
@@ -43,6 +45,7 @@
         "mkdirp": "^0.5.1",
         "npm": "^4.0.2",
         "path": "^0.12.7",
+        "spellchecker": "^3.3.1",
         "typescript": "^1.8.10"
     },
     "license": "MIT",

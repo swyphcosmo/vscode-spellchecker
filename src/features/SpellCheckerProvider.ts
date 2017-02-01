@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 let mkdirp = require( 'mkdirp' );
-let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
+let sc = require( 'spellchecker' );
 let jsonMinify = require( 'jsonminify' );
 
 // Toggle debug output
@@ -33,7 +33,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private DICT = undefined;
 	private settings: SpellSettings;
 	private static CONFIGFILE: string = '';
-	private SpellChecker = new sc();
+	private SpellChecker = sc;
 	private extensionRoot: string;
 	private lastcheck: number = -1;
 	private timer = null;
@@ -350,7 +350,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 					token = token.replace( /’/, '\'' );
 				}
 
-				if( !this.SpellChecker.check( token ) )
+				if( this.SpellChecker.isMisspelled( token ) )
 				{
 					if( DEBUG )
 						console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
@@ -373,7 +373,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 							
 							if( token.length < 50 && containsNumber == null )
 							{
-								let suggestions = this.SpellChecker.suggest( token );
+								let suggestions = this.SpellChecker.getCorrectionsForMisspelling( token );
 								for( let s of suggestions )
 								{
 									message += s + ', ';
@@ -618,13 +618,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		// console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
 		this.settings.language = language;
-		this.DICT = this.SpellChecker.parse(
-			{
-				aff: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.aff' ) ),
-				dic: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.dic' ) )
-			});
-			
-		this.SpellChecker.use( this.DICT );
+		this.SpellChecker.setDictionary(language);
 	}
 
 	public getDocumentTypes(): string[]
