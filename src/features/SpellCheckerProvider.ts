@@ -10,6 +10,8 @@ let jsonMinify = require( 'jsonminify' );
 // Toggle debug output
 let DEBUG:boolean = false;
 
+const DEFAULT_LANG:string = 'fr'; // 'en_US';
+
 interface SpellSettings {
 	language: string,
 	ignoreWordsList: string[];
@@ -93,7 +95,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( 'Creating file \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
 
 			let defaultSettings: SpellSettings = {
-				language: 'en_US',
+				language: DEFAULT_LANG,
 				ignoreWordsList: [],
 				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
 				ignoreRegExp: [],
@@ -614,7 +616,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		return false;
 	}
 
-	public setLanguage( language: string = 'en_US' ): void
+	public setLanguage( language: string = DEFAULT_LANG ): void
 	{
 		// console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
 		this.settings.language = language;
@@ -710,7 +712,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private getSettings() : SpellSettings
 	{
 		let returnSettings: SpellSettings = {
-			language: 'en_US',
+			language: DEFAULT_LANG,
 			ignoreWordsList: [],
 			documentTypes: [ 'markdown', 'latex', 'plaintext' ],
 			ignoreRegExp: [],
