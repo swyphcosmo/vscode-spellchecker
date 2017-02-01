@@ -32,11 +32,15 @@
     "build-for-vscode": "./node_modules/.bin/electron-rebuild -v 1.4.6",
     "vscode:prepublish": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile",
     "compile": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile -watch -p ./",
+    "package": "./node_modules/.bin/vsce package",
+    "publish-minor": "vsce publish minor",
+    "publish-major": "vsce publish major",
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "devDependencies": {
     "electron-rebuild": "^1.5.7",
     "typescript": "^1.8.10",
+    "vsce": "^1.18.0",
     "vscode": "^0.11.0"
   },
   "dependencies": {
