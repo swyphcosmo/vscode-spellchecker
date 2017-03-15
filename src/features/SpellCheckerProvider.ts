@@ -345,7 +345,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				}
 
 				colnumber = position;
-				lastposition = position;
+				lastposition = position + 1;
 
 				if( token.indexOf( '’' ) >= 0 )
 				{
