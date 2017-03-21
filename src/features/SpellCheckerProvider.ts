@@ -202,8 +202,10 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		text = this.processUserIgnoreRegex( text );
 
-		// remove pandoc yaml header
-		text = text.replace( /---(.|\n)*\.\.\./g, ' ' );
+		if (/\.ya?ml$/.test(textDocument.fileName)) {
+			text = text.replace( /---(.|\n)*\.\.\./g, ' ' ); // do this on yaml files only
+		}
+
 		if( DEBUG )
 		{
 			console.log( text );
