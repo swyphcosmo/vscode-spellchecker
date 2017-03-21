@@ -3,7 +3,7 @@
   "displayName": "French spell checker",
   "description": "(in development) A spell checker for the French language, works offline.",
   "icon": "images/france.svg",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "publisher": "adrienjoly",
   "engines": {
     "vscode": "^1.0.0"

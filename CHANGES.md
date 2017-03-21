@@ -1,3 +1,5 @@
+== v1.2.12: bug fix: `---` disabled spellchecking in .md file
+
 == v1.2.11: bug fix: same spelling error on same line
 
 == v1.2.10: added icon and updated links to vscode marketplace
