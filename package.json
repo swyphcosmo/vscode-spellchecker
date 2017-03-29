@@ -3,7 +3,7 @@
   "displayName": "French spell checker",
   "description": "(in development) A spell checker for the French language, works offline.",
   "icon": "images/france.svg",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "publisher": "adrienjoly",
   "engines": {
     "vscode": "^1.0.0"
@@ -26,7 +26,50 @@
         "title": "Show documentType for Current File"
       }
     ],
-    "keybindings": []
+    "keybindings": [],
+    "configuration": {
+      "type": "object",
+      "title": "Spellchecker-fr configuration",
+      "properties": {
+        "spellchecker.language": {
+          "type": "string",
+          "default": "fr",
+          "description": "Tested languages are French (fr, by default) and English (en_US)",
+          "enum": [
+            "fr",
+            "en_US"
+          ]
+        },
+        "spellchecker.ignoreWordsList": {
+          "type": "array",
+          "default": [],
+          "description": "An array of strings that contain the words that will not be checked by the spell checker"
+        },
+        "spellchecker.documentTypes": {
+          "type": "array",
+          "default": ["markdown", "latex", "plaintext"],
+          "description": "An array of strings that limit the document types that this extension will check. Default document types are markdown, latex, and plaintext"
+        },
+        "spellchecker.ignoreFileExtensions": {
+          "type": "array",
+          "default": [],
+          "description": "An array of file extensions that will not be spell checked"
+        },
+        "spellchecker.checkInterval": {
+          "type": "int",
+          "default": 5000,
+          "description": "Number of milliseconds to delay between full document spell checks. Default: 5000 ms"
+        },
+        "spellchecker.ignoreRegExp": {
+          "type": "array",
+          "default": [],
+          "description": "An array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. /\\s/g becomes /\\\\s/g",
+          "enum": [
+            "/\\\\\\\\(begin|end){[a-zA-Z]+}|\\\\\\\\[a-zA-Z]+/g"
+          ]
+        }
+      }
+    }
   },
   "scripts": {
     "test": "npm rebuild && node test.js",
@@ -42,7 +85,7 @@
   "devDependencies": {
     "electron-rebuild": "^1.5.7",
     "typescript": "^1.8.10",
-    "vsce": "^1.19.0"
+    "vsce": "^1.19.0",
     "vscode": "^0.11.0"
   },
   "dependencies": {

@@ -1,3 +1,5 @@
+== v1.2.13: @MrYann officialised user settings in settings.json
+
 == v1.2.12: bug fix: `---` disabled spellchecking in .md file
 
 == v1.2.11: bug fix: same spelling error on same line
