@@ -3,7 +3,7 @@
   "displayName": "French spell checker",
   "description": "(in development) A spell checker for the French language, works offline.",
   "icon": "images/france.svg",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "publisher": "adrienjoly",
   "engines": {
     "vscode": "^1.0.0"
@@ -63,11 +63,11 @@
         "spellchecker.ignoreRegExp": {
           "type": "array",
           "default": [],
-          "description": "An array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. /\s/g becomes /\\\\s/g",
+          "description": "An array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. /\\s/g becomes /\\\\s/g",
           "enum": [
             "/\\\\\\\\(begin|end){[a-zA-Z]+}|\\\\\\\\[a-zA-Z]+/g"
           ]
-        },
+        }
       }
     }
   },
@@ -85,7 +85,7 @@
   "devDependencies": {
     "electron-rebuild": "^1.5.7",
     "typescript": "^1.8.10",
-    "vsce": "^1.19.0"
+    "vsce": "^1.19.0",
     "vscode": "^0.11.0"
   },
   "dependencies": {
