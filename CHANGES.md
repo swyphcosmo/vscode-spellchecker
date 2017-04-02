@@ -1,3 +1,5 @@
+== v1.2.15: Added sample regexes
+
 == v1.2.14: Removed enum preset (regex) causing a warning
 
 == v1.2.13: @MrYann officialised user settings in settings.json
