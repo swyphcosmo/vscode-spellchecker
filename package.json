@@ -76,7 +76,7 @@
     "vscode:prepublish": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile",
     "compile": "npm run build-for-vscode && node ./node_modules/vscode/bin/compile -watch -p ./",
     "package": "./node_modules/.bin/vsce package",
-    "publish": "npm run vscode:prepublish && vsce publish",
+    "publish": "vsce publish",
     "publish-minor": "vsce publish minor",
     "publish-major": "vsce publish major",
     "postinstall": "node ./node_modules/vscode/bin/install"
