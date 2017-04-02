@@ -47,9 +47,10 @@ The following settings can be changed:
 * `ignoreFileExtensions`: an array of file extensions that will not be spell checked
 * `checkInterval`: number of milliseconds to delay between full document spell checks. Default: 5000 ms.
 * `ignoreRegExp`: an array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. `/\s/g` becomes `"/\\\\s/g"`. The following are examples provided in the example configuration file:
-	* `"/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"`: remove links to image and markdown files
-	* `"/((http|https|ftp|git)\\\\S*)/g"`: remove hyperlinks
-	* `"/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"`: remove code blocks
+	* `["/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"]`: remove links to image and markdown files
+	* `["/((http|https|ftp|git)\\\\S*)/g"]`: remove hyperlinks
+	* `["/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"]`: remove code blocks
+	* `["/\\\\\\\\(begin|end){[a-zA-Z]+}|\\\\\\\\[a-zA-Z]+/g"]` : ignore (most) latex commands
 
 Additional sections are already removed from files, including:
 

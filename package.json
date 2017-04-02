@@ -63,9 +63,7 @@
         "spellchecker.ignoreRegExp": {
           "type": "array",
           "default": [],
-          "description": "An array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. /\\s/g becomes /\\\\s/g",
-          "enum": [
-          ]
+          "description": "An array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. /\s/g becomes /\\\\s/g"
         }
       }
     }
