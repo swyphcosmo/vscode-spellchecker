@@ -7,6 +7,7 @@
     "engines": {
         "vscode": "^1.0.0"
     },
+    "icon": "images/icon.svg",
     "categories": [
         "Other"
     ],
@@ -17,15 +18,60 @@
     "contributes": {
         "commands": [
             {
-                "command": "spellchecker.createSettingsFile",
-                "title": "Create Spell Checker Settings File"
+                "command": "spellchecker.setLanguage",
+                "title": "Set Spell Checker Language"
             },
             {
                 "command": "spellchecker.showDocumentType",
                 "title": "Show documentType for Current File"
+            },
+            {
+                "command": "spellchecker.checkDocument",
+                "title": "Spell Check Current File"
             }
         ],
-        "keybindings": []
+        "keybindings": [
+            {
+                "key": "shift+alt+s",
+                "command": "spellchecker.checkDocument",
+                "when": "editorTextFocus"
+            }
+        ],
+        "configuration": {
+            "properties": {
+                "spellchecker.ignoreWordsList": {
+                    "type":"array",
+                    "default":[],
+                    "description": "Array of strings that contain the words that will not be checked by the Spell Checker."
+                },
+                "spellchecker.language": {
+                    "type":"string",
+                    "default":"en_US",
+                    "description": "Dictionary language. Currently supported: 'en_US', 'en_GB-ise', or 'es_ANY'."
+                },
+                "spellchecker.documentTypes": {
+                    "type":"array",
+                    "default":["markdown","latex","plaintext"],
+                    "description": "Array of strings that limit the document types that will be spell checked."
+                },
+                "spellchecker.ignoreFileExtensions": {
+                    "type":"array",
+                    "default":[],
+                    "description": "Array of file extensions that will not be spell checked."
+                },
+                "spellchecker.checkInterval": {
+                    "type":"integer",
+                    "default":5000,
+                    "description": "Number of milliseconds to delay between full document checks. If set less than zero, the document will never be automatically checked."
+                },
+                "spellchecker.ignoreRegExp": {
+                    "type":"array",
+                    "default":[],
+                    "description": "Array of regular expressions that will be used to remove text from the document before it is spell checked."
+                }
+            },
+            "title": "Spell Checker Settings"
+        }
     },
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",

@@ -27,18 +27,16 @@ You can correct the error by clicking on the Quick Fix (light bulb) icon.
 
 ## Configuration File
 
-You can configure the operation of this extension by placing a file called `spellchecker.json` into your workspace's `.vscode` folder.
-
-An example configuration file can be found [here](https://github.com/swyphcosmo/vscode-spellchecker/blob/master/settings/spellchecker.json). 
+You can configure the operation of this extension by editing settings in `File > Preferences > Settings`.
 
 The following settings can be changed:
 
-* `language`: supported languages are English (`"en_US"` or `"es_GB-ise"`) and Spanish (`"es_ANY"`).
-* `ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
-* `documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
-* `ignoreFileExtensions`: an array of file extensions that will not be spell checked
-* `checkInterval`: number of milliseconds to delay between full document spell checks. Default: 5000 ms.
-* `ignoreRegExp`: an array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. `/\s/g` becomes `"/\\\\s/g"`. The following are examples provided in the example configuration file:
+* `spellchecker.language`: supported languages are English (`"en_US"` or `"en_GB-ise"`) and Spanish (`"es_ANY"`).
+* `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
+* `spellchecker.documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
+* `spellchecker.ignoreFileExtensions`: an array of file extensions that will not be spell checked
+* `spellchecker.checkInterval`: number of milliseconds to delay between full document spell checks. Default: 5000 ms.
+* `spellchecker.ignoreRegExp`: an array of regular expressions that will be used to remove text from the document before it is checked. Since the expressions are represented in the JSON as strings, all backslashes need to be escaped with three additional backslashes, e.g. `/\s/g` becomes `"/\\\\s/g"`. The following are examples provided in the example configuration file:
 	* `"/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"`: remove links to image and markdown files
 	* `"/((http|https|ftp|git)\\\\S*)/g"`: remove hyperlinks
 	* `"/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"`: remove code blocks
@@ -50,14 +48,6 @@ Additional sections are already removed from files, including:
 * Pandoc citations 
 * Inline code blocks
 * Email addresses
-
->**Note:** If this file is updated manually, you will need to reload VSCode for changes to take effect.
-
-The `Create Spell Checker Settings File` command has been provided to add a default settings file to the current workspace if one does not already exist.
-
-## Global Configuration
-
-As of `v1.2.0`, you can add any of the settings in `spellchecker.json` to the User Preferences `settings.json`. Be sure to add `'spellchecker.'` to any of the settings. For example, add words to ignore to the variable `"spellchecker.ignoreWordsList"`.
 
 ## Benchmarks (sort of)
 
@@ -81,11 +71,21 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## TODO
 
-* Add additional language support
-	* Add command to change language
+* Update animation demos under Functionality section.
 
 ## Release Notes
 
+* `v1.2.10`:
+	* Added settings to package.json so that VSCode doesn't give warnings when editing `settings.json`. 
+	* Workspace settings are now included in `.vscode/settings.json`. Previous `.vscode/spellchecker.json` will be migrated with the option to delete.
+	* Removed 'CreateConfigurationFile' action because configuration can now be handled though `File > Preferences > Settings`.
+	* Added command to set language.
+	* Pandoc YAML front matter can end with `...` or `---`.
+	* Added Greek language support (Thanks tsangiotis).
+	* Added French language support (Thanks adrienjoly).
+	* Added extension icon.
+	* Changed spell check actions to 'Ignore' (add to workspace dictionary) and 'Always Ignore' (add to user dictionary).
+	* Changes to either the user or workspace settings.json will be automatically loaded when changed.
 * `v1.2.9`:
 	* Fixed #28. The last character of the last suggestion was being cut off.
 * `v1.2.8`:

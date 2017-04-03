@@ -37,7 +37,29 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private extensionRoot: string;
 	private lastcheck: number = -1;
 	private timer = null;
-	private timerTextDocument: vscode.TextDocument;
+	private timerTextDocument: vscode.TextDocument = null;
+	private availableLanguages = [
+		{
+			description: 'English US',
+			filename: 'en_US'
+		},
+		{
+			description: 'English UK',
+			filename: 'en_GB-ise'
+		},
+		{
+			description: 'Spanish',
+			filename: 'es_ANY'
+		},
+		{
+			description: 'French',
+			filename: 'fr'
+		},
+		{
+			description: 'Greek',
+			filename: 'el_GR'
+		}
+	];
 
 	public activate( context: vscode.ExtensionContext )
 	{
@@ -48,9 +70,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		this.settings = this.getSettings();
 		this.setLanguage( this.settings.language );
 
-		vscode.commands.registerCommand( 'spellchecker.createSettingsFile', this.createSettingsFile, this );
 		vscode.commands.registerCommand( 'spellchecker.showDocumentType', this.showDocumentType, this );
-		// vscode.commands.registerCommand( 'spellchecker.setLanguage', SetLanguage );
+		vscode.commands.registerCommand( 'spellchecker.checkDocument', this.doSpellCheck, this );
+		vscode.commands.registerCommand( 'spellchecker.setLanguage', this.setLanguageCommand, this );
 
 		this.suggestCommand = vscode.commands.registerCommand( SpellCheckerProvider.suggestCommandId, this.fixSuggestionCodeAction, this );
 		this.ignoreCommand = vscode.commands.registerCommand( SpellCheckerProvider.ignoreCommandId, this.ignoreCodeAction, this );
@@ -58,22 +80,26 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		subscriptions.push( this );
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection( 'Spelling' );
 
-		vscode.workspace.onDidOpenTextDocument( this.doSpellCheck, this, subscriptions );
+		vscode.workspace.onDidOpenTextDocument( this.doAutoSpellCheck, this, subscriptions );
 		vscode.workspace.onDidCloseTextDocument( ( textDocument ) => 
 		{
 			this.diagnosticCollection.delete( textDocument.uri );
 		}, null, subscriptions);
 
-		vscode.workspace.onDidSaveTextDocument( this.doSpellCheck, this, subscriptions );
+		vscode.workspace.onDidSaveTextDocument( this.doAutoSpellCheck, this, subscriptions );
 		
 		vscode.workspace.onDidChangeTextDocument( this.doDiffSpellCheck, this, subscriptions );
 
+		vscode.workspace.onDidChangeConfiguration( this.settingsChanged, this );
+
 		// Spell check all open documents
-		vscode.workspace.textDocuments.forEach( this.doSpellCheck, this );
+		// vscode.workspace.textDocuments.forEach( this.doAutoSpellCheck, this );
 
 		// register code actions provider
 		for( let i = 0; i < this.settings.documentTypes.length; i++ )
 			vscode.languages.registerCodeActionsProvider( this.settings.documentTypes[ i ], this );
+
+		console.log( "Finished activation" );
 	}
 
 	public dispose(): void
@@ -85,34 +111,10 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		this.alwaysIgnoreCommand.dispose();
 	}
 
-	private createSettingsFile(): void
+	public settingsChanged(): void
 	{
-		if( SpellCheckerProvider.CONFIGFILE.length > 0 && !fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
-		{
-			console.log( 'Spell checker configuration file not found' );
-			console.log( 'Creating file \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
-
-			let defaultSettings: SpellSettings = {
-				language: 'en_US',
-				ignoreWordsList: [],
-				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
-				ignoreRegExp: [],
-				ignoreFileExtensions: [],
-				checkInterval: 5000
-			};
-
-			this.saveWorkspaceSettings( defaultSettings );
-		}
-		else if( fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
-		{
-			console.log( 'Spell checker configuration file already exists' );
-			console.log( 'Contents of \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
-			console.log( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) );
-		}
-		else
-		{
-			console.log( 'Invalid Spell checker configuration file name: \'' +  + SpellCheckerProvider.CONFIGFILE + '\'' );
-		}
+		this.settings = this.getSettings();
+		this.setLanguage( this.settings.language );
 	}
 
 	private showDocumentType(): void
@@ -127,6 +129,27 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 	}
 
+	private setLanguageCommand(): void
+	{
+		let qpOptions: vscode.QuickPickOptions = 
+		{
+			placeHolder: 'Select one of the available languages:'
+		};
+		let options = [];
+
+		this.availableLanguages.forEach( function( value )
+		{
+			options.push( value.description + ' (' + value.filename + ')' );
+		});
+
+		vscode.window.showQuickPick( options, qpOptions ).then( val => 
+		{
+			let language = val.match( /\(.*\)/g )[ 0 ];
+			language = language.substring( 1, language.length - 1 );
+			this.setLanguage( language );
+		});
+	}
+
 	private doDiffSpellCheck( event:vscode.TextDocumentChangeEvent )
 	{
 		// Is this a document type that we should check?
@@ -137,6 +160,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		// Is this a file extension that we should ignore?
 		if( this.settings.ignoreFileExtensions.indexOf( path.extname( event.document.fileName ) ) >= 0 )
+		{
+			return;
+		}
+
+		// If checkInterval is negative, the document will not be automatically checked
+		if( this.settings.checkInterval < 0 )
 		{
 			return;
 		}
@@ -154,12 +183,33 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 	}
 
+	private doAutoSpellCheck( textDocument: vscode.TextDocument )
+	{
+		// If checkInterval is negative, the document will not be automatically checked
+		if( this.settings.checkInterval < 0 )
+		{
+			return;
+		}
+
+		this.doSpellCheck( textDocument );
+	}
+
 	private doSpellCheck( textDocument: vscode.TextDocument )
 	{
-		if( textDocument == null )
+		if( textDocument == null || textDocument.fileName == null )
 		{
-			textDocument = this.timerTextDocument;
+			if( this.timerTextDocument == null )
+			{
+				textDocument = vscode.window.activeTextEditor.document;
+			}
+			else
+			{
+				textDocument = this.timerTextDocument;
+			}
 		}
+
+		if( textDocument == null || textDocument.fileName == null )
+			return;
 
 		if( DEBUG )
 			console.log( "documentType for " + textDocument.fileName + " is " + textDocument.languageId );
@@ -201,7 +251,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		text = this.processUserIgnoreRegex( text );
 
 		// remove pandoc yaml header
-		text = text.replace( /---(.|\n)*\.\.\./g, ' ' );
+		text = text.replace( /-{3}(.|\n)*(\.{3}|\-{3})/g, ' ' );
 		if( DEBUG )
 		{
 			console.log( text );
@@ -504,7 +554,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		}
 
 		commands.push( {
-			title: 'Add \'' + word + '\' to dictionary',
+			title: 'Ignore \'' + word + '\'',
 			command: SpellCheckerProvider.ignoreCommandId,
 			arguments: [ document, word ]
 		});
@@ -581,7 +631,15 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		if( this.settings.ignoreWordsList.indexOf( word ) < 0 )
 		{
 			this.settings.ignoreWordsList.push( word );
-			this.saveWorkspaceSettings( this.settings );
+			if( save )
+			{
+				let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration( 'spellchecker' );
+
+				let inspection = userSettingsData.inspect( 'ignoreWordsList' );
+				let ignoreWordsList: string[] = inspection.workspaceValue;
+				ignoreWordsList.push( word );
+				userSettingsData.update( 'ignoreWordsList', this.getUniqueArray( ignoreWordsList ), true );
+			}
 			return true;
 		}
 		
@@ -592,24 +650,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	{
 		if( this.addWordToIgnoreList( word, false ) )
 		{
-			let userSettingsData = this.getUserSettings();
-			if( Object.keys( userSettingsData ).indexOf( 'spellchecker.ignoreWordsList' ) > 0 )
-			{
-				if( userSettingsData[ 'spellchecker.ignoreWordsList' ].indexOf( word ) < 0 )
-				{
-					userSettingsData[ 'spellchecker.ignoreWordsList' ].push( word );
-					this.saveUserSettings( userSettingsData );
-					return true;
-				}
-				else
-					return false;
-			}
-			else
-			{
-				userSettingsData[ 'spellchecker.ignoreWordsList' ] = [ word ];
-				this.saveUserSettings( userSettingsData );
-				return true;
-			}
+			let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration( 'spellchecker' );
+
+			let inspection = userSettingsData.inspect( 'ignoreWordsList' );
+			let ignoreWordsList: string[] = inspection.globalValue;
+			ignoreWordsList.push( word );
+			userSettingsData.update( 'ignoreWordsList', this.getUniqueArray( ignoreWordsList ), true );
 		}
 		return false;
 	}
@@ -647,70 +693,76 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		return a;
 	}
 
-	private getUserSettingsFilename(): string
+	private migrateWorkspaceSettings(): void
 	{
-		let codeFolder = 'Code';
-		if( vscode.version.indexOf( 'insider' ) >= 0 )
-			codeFolder = 'Code - Insiders';
-		if( process.platform == 'win32' )
-			return path.join( process.env.APPDATA, codeFolder, 'User', 'settings.json' );
-		else if( process.platform == 'darwin' )
-			return path.join( process.env.HOME, 'Library', 'Application Support', codeFolder, 'User', 'settings.json' );
-		else if( process.platform == 'linux' )
-			return path.join( process.env.HOME, '.config', codeFolder, 'User', 'settings.json' );
-		else
-			return "";
-	}
-
-	private getUserSettings(): any
-	{
-		// Check user settings
-		let userSettingsFilename: string = this.getUserSettingsFilename();
-
-		if( userSettingsFilename.length > 0 )
+		let qpOptions: vscode.QuickPickOptions = 
 		{
-			if( fs.existsSync( userSettingsFilename ) )
-			{
-				let userSettingsFile: string = fs.readFileSync( userSettingsFilename, 'utf-8' );
-
-				// parse and remove any comment lines in the settings file
-				return JSON.parse( jsonMinify( userSettingsFile ) );
-			}
-		}
-		
-		return null;
-	}
-
-	private saveUserSettings( settings ): boolean
-	{
-		let userSettingsFilename: string = this.getUserSettingsFilename();
-
-		if( userSettingsFilename.length > 0 )
+			placeHolder: 'Settings are now included in \'settings.json\'. What would you like to do?'
+		};
+		let options = [
+			'Migrate and delete \'spellcheck.json\'',
+			'Migrate and keep \'spellcheck.json\''
+			// 'Ignore migration for now (settings will still be loaded)'
+		]
+		vscode.window.showQuickPick( options, qpOptions ).then(val => 
 		{
-			let data: string = "// Place your settings in this file to overwrite the default settings\n" + JSON.stringify( settings, null, 4 );
-			fs.writeFileSync( userSettingsFilename, data );
-			return true;
-		}
-		else
-			return false;
-	}
+			let migrate: boolean = false;
+			let deleteOriginal: boolean = false; 
 
-	private saveWorkspaceSettings( settings: SpellSettings ): void
-	{
-		if( SpellCheckerProvider.CONFIGFILE.length > 0 )
-		{
-			console.log( 'Saving spell check configuration' );
-			console.log( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
-			try
+			switch( val )
 			{
-				mkdirp.sync( path.dirname( SpellCheckerProvider.CONFIGFILE ) );
-				fs.writeFileSync( SpellCheckerProvider.CONFIGFILE, JSON.stringify( settings, null, 4 ) );
+				case 'Migrate settings and delete \'spellcheck.json\'':
+				{
+					migrate = true;
+					deleteOriginal = true;
+					break;
+				}
+				case 'Migrate settings and keep \'spellcheck.json\'':
+				{
+					migrate = true;
+					deleteOriginal = false;
+					break;
+				}
+				case 'Ignore migration for now (settings will still be loaded)':
+				{
+					migrate = false;
+					deleteOriginal = false;
+				}
 			}
-			catch( e )
+
+			let settings: SpellSettings = JSON.parse( jsonMinify( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) ) );
+
+			if( migrate )
 			{
-				console.log( e );
+				// Check user settings
+				let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration( 'spellchecker' );
+				Object.keys( settings ).forEach( function( key )
+				{
+					if( Array.isArray( settings[ key ] ) )
+						userSettingsData.update( key, this.getUniqueArray( settings[ key ].concat( userSettingsData[ key ] ) ), false );
+					else
+						userSettingsData.update( key, settings[ key ], false );
+				}, this );
+
 			}
-		}
+			else
+			{
+				let userSettingsData = this.settings;
+				Object.keys( settings ).forEach( function( key )
+				{
+					if( Array.isArray( settings[ key ] ) )
+						userSettingsData[ key ] = this.getUniqueArray( settings[ key ].concat( userSettingsData[ key ] ) );
+					else
+						userSettingsData[ key ] = settings[ key ];
+				}, this );
+
+				this.settings = userSettingsData;
+				this.setLanguage( this.settings.language );
+			}
+
+			if( deleteOriginal )
+				fs.unlinkSync( SpellCheckerProvider.CONFIGFILE );
+		});
 	}
 
 	private getSettings() : SpellSettings
@@ -725,19 +777,22 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		};
 
 		// Check user settings
-		let userSettingsData = this.getUserSettings();
+		let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration( 'spellchecker' );
 
+		// If there are spellchecker settings in the user settings file
 		if( userSettingsData )
 		{
+			// overwrite default settings with user settings
 			Object.keys( returnSettings ).forEach( function( key )
 			{
-				if( userSettingsData[ 'spellchecker.' + key ] )
+				if( userSettingsData[ key ] )
 				{
-					returnSettings[ key ] = userSettingsData[ 'spellchecker.' + key ];
+					returnSettings[ key ] = userSettingsData[ key ];
 				}
 			});
 		}
 
+		// If we are in a workspace, get the spellchecker settings file
 		if( SpellCheckerProvider.CONFIGFILE.length == 0 && vscode.workspace.rootPath )
 		{
 			SpellCheckerProvider.CONFIGFILE = path.join( vscode.workspace.rootPath, '.vscode', 'spellchecker.json' );
@@ -745,26 +800,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		if( SpellCheckerProvider.CONFIGFILE.length > 0 && fs.existsSync( SpellCheckerProvider.CONFIGFILE ) )
 		{
-			let settings: SpellSettings = JSON.parse( jsonMinify( fs.readFileSync( SpellCheckerProvider.CONFIGFILE, 'utf-8' ) ) );
-
-			if( DEBUG )
-			{
-				console.log( 'Found configuration file' );
-				console.log( settings );
-			}
-
-			Object.keys( returnSettings ).forEach( function( key )
-			{
-				if( Array.isArray( returnSettings[ key ] ) )
-					returnSettings[ key ] = this.getUniqueArray( returnSettings[ key ].concat( settings[ key ] ) );
-				else
-					returnSettings[ key ] = settings[ key ];
-			}, this );
+			this.migrateWorkspaceSettings();
 		}
 		else
 		{
 			if( DEBUG )
-				console.log( 'Configuration file not found: ' + SpellCheckerProvider.CONFIGFILE );
+				console.log( 'Workspace configuration file not found: \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
 		}
 
 		return returnSettings;
