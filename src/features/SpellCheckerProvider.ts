@@ -4,11 +4,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 let mkdirp = require( 'mkdirp' );
-let sc = require( '../../../lib/hunspell-spellchecker/lib/index.js' );
+let sc = require( 'spellchecker' );
 let jsonMinify = require( 'jsonminify' );
 
 // Toggle debug output
 let DEBUG:boolean = false;
+
+const DEFAULT_LANG:string = 'fr'; // 'en_US';
 
 interface SpellSettings {
 	language: string,
@@ -33,7 +35,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private DICT = undefined;
 	private settings: SpellSettings;
 	private static CONFIGFILE: string = '';
-	private SpellChecker = new sc();
+	private SpellChecker = sc;
 	private extensionRoot: string;
 	private lastcheck: number = -1;
 	private timer = null;
@@ -93,7 +95,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			console.log( 'Creating file \'' + SpellCheckerProvider.CONFIGFILE + '\'' );
 
 			let defaultSettings: SpellSettings = {
-				language: 'en_US',
+				language: DEFAULT_LANG,
 				ignoreWordsList: [],
 				documentTypes: [ 'markdown', 'latex', 'plaintext' ],
 				ignoreRegExp: [],
@@ -200,8 +202,10 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 		text = this.processUserIgnoreRegex( text );
 
-		// remove pandoc yaml header
-		text = text.replace( /---(.|\n)*\.\.\./g, ' ' );
+		if (/\.ya?ml$/.test(textDocument.fileName)) {
+			text = text.replace( /---(.|\n)*\.\.\./g, ' ' ); // do this on yaml files only
+		}
+
 		if( DEBUG )
 		{
 			console.log( text );
@@ -343,14 +347,14 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				}
 
 				colnumber = position;
-				lastposition = position;
+				lastposition = position + 1;
 
 				if( token.indexOf( '’' ) >= 0 )
 				{
 					token = token.replace( /’/, '\'' );
 				}
 
-				if( !this.SpellChecker.check( token ) )
+				if( this.SpellChecker.isMisspelled( token ) )
 				{
 					if( DEBUG )
 						console.log( 'Error: \'' + token + '\', line ' + String( linenumber + 1 ) + ', col ' + String( colnumber + 1 ) );
@@ -373,7 +377,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 							
 							if( token.length < 50 && containsNumber == null )
 							{
-								let suggestions = this.SpellChecker.suggest( token );
+								let suggestions = this.SpellChecker.getCorrectionsForMisspelling( token );
 								for( let s of suggestions )
 								{
 									message += s + ', ';
@@ -614,17 +618,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 		return false;
 	}
 
-	public setLanguage( language: string = 'en_US' ): void
+	public setLanguage( language: string = DEFAULT_LANG ): void
 	{
 		// console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
 		this.settings.language = language;
-		this.DICT = this.SpellChecker.parse(
-			{
-				aff: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.aff' ) ),
-				dic: fs.readFileSync( path.join( this.extensionRoot, 'languages', this.settings.language + '.dic' ) )
-			});
-			
-		this.SpellChecker.use( this.DICT );
+		this.SpellChecker.setDictionary(language);
 	}
 
 	public getDocumentTypes(): string[]
@@ -716,7 +714,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 	private getSettings() : SpellSettings
 	{
 		let returnSettings: SpellSettings = {
-			language: 'en_US',
+			language: DEFAULT_LANG,
 			ignoreWordsList: [],
 			documentTypes: [ 'markdown', 'latex', 'plaintext' ],
 			ignoreRegExp: [],
