@@ -75,6 +75,8 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.11`:
+	* Increased icon size.
 * `v1.2.10`:
 	* Added settings to package.json so that VSCode doesn't give warnings when editing `settings.json`. 
 	* Workspace settings are now included in `.vscode/settings.json`. Previous `.vscode/spellchecker.json` will be migrated with the option to delete.
