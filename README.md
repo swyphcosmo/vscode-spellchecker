@@ -75,6 +75,8 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `v1.2.12`:
+	* Fixed bug in migration of old settings files (#41)
 * `v1.2.11`:
 	* Increased icon size.
 * `v1.2.10`:

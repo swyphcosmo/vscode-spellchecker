@@ -700,9 +700,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 			placeHolder: 'Settings are now included in \'settings.json\'. What would you like to do?'
 		};
 		let options = [
-			'Migrate and delete \'spellcheck.json\'',
-			'Migrate and keep \'spellcheck.json\''
-			// 'Ignore migration for now (settings will still be loaded)'
+			'Migrate and delete \'spellchecker.json\'',
+			'Migrate and keep \'spellchecker.json\'',
+			'Ignore migration for now (settings will still be loaded)'
 		]
 		vscode.window.showQuickPick( options, qpOptions ).then(val => 
 		{
@@ -711,13 +711,13 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 
 			switch( val )
 			{
-				case 'Migrate settings and delete \'spellcheck.json\'':
+				case 'Migrate and delete \'spellchecker.json\'':
 				{
 					migrate = true;
 					deleteOriginal = true;
 					break;
 				}
-				case 'Migrate settings and keep \'spellcheck.json\'':
+				case 'Migrate settings and keep \'spellchecker.json\'':
 				{
 					migrate = true;
 					deleteOriginal = false;
@@ -727,6 +727,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider
 				{
 					migrate = false;
 					deleteOriginal = false;
+					break;
 				}
 			}
 
