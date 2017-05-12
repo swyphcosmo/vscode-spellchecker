@@ -10,7 +10,9 @@
     "ignoreRegExp": [
         "/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|svg|pdf|PDF|SVG|JPG|JPEG|PNG|MD|GIF)\\\\)/g",
         "/((http|https|ftp|git)\\\\S*)/g",
-        "/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"
+        "/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm",
+        "/\\\\w*{.*?}/g",
+        "/\\~/g"
     ],
     "ignoreFileExtensions": [
         ".env"
