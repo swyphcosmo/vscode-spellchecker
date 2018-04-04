@@ -31,7 +31,10 @@ You can configure the operation of this extension by editing settings in `File >
 
 The following settings can be changed:
 
-* `spellchecker.language`: supported languages are English (`"en_US"` or `"en_GB-ise"`) and Spanish (`"es_ANY"`).
+* `spellchecker.language`: supported languages are:
+	* English (`"en_US"` or `"en_GB-ise"`)
+	* Greek (`"el_GR"`)
+	* Spanish (`"es_ANY"`)
 * `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `spellchecker.documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `spellchecker.ignoreFileExtensions`: an array of file extensions that will not be spell checked
