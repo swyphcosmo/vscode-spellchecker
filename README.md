@@ -33,6 +33,7 @@ The following settings can be changed:
 
 * `spellchecker.language`: supported languages are:
 	* English (`"en_US"` or `"en_GB-ise"`)
+	* French (`"fr"`)
 	* Greek (`"el_GR"`)
 	* Spanish (`"es_ANY"`)
 * `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
