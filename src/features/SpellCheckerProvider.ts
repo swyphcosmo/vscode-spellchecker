@@ -8,7 +8,7 @@ let sc = require('../../../lib/hunspell-spellchecker/lib/index.js');
 let jsonMinify = require('jsonminify');
 
 // Toggle debug output
-let DEBUG: boolean = true;
+let DEBUG: boolean = false;
 
 interface SpellSettings {
 	language: string,
@@ -591,9 +591,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 				let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('spellchecker');
 
 				let inspection = userSettingsData.inspect('ignoreWordsList');
-				let ignoreWordsList = inspection.workspaceValue;
-				// ignoreWordsList.push(word);
-				// userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
+				let ignoreWordsList: string[] = inspection.workspaceValue;
+				ignoreWordsList.push(word);
+				userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
 			}
 			return true;
 		}
@@ -606,9 +606,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('spellchecker');
 
 			let inspection = userSettingsData.inspect('ignoreWordsList');
-			let ignoreWordsList = inspection.globalValue;
-			// ignoreWordsList.push(word);
-			// userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
+			let ignoreWordsList: string[] = inspection.globalValue;
+			ignoreWordsList.push(word);
+			userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
 		}
 		return false;
 	}
