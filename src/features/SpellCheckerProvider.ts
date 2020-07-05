@@ -242,7 +242,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 		}
 
 		// remove pandoc yaml header
-		text = text.replace(/-{3}(.|\n)*(\.{3}|\-{3})/g, ' ');
+		text = text.replace(/-{3}(.|\n)*\n(\.{3}|\-{3})/g, ' ');
 		if (DEBUG) {
 			console.log('Remove yaml header');
 			console.log(text);
