@@ -591,9 +591,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 				let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('spellchecker');
 
 				let inspection = userSettingsData.inspect('ignoreWordsList');
-				let ignoreWordsList: string[] = inspection.workspaceValue;
+				let ignoreWordsList: Array<string> = []
+				if (inspection.workspaceValue instanceof Array) {
+					ignoreWordsList = inspection.workspaceValue;
+				}
 				ignoreWordsList.push(word);
-				userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
+				userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), vscode.ConfigurationTarget.Workspace);
 			}
 			return true;
 		}
@@ -606,15 +609,18 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			let userSettingsData: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('spellchecker');
 
 			let inspection = userSettingsData.inspect('ignoreWordsList');
-			let ignoreWordsList: string[] = inspection.globalValue;
+			let ignoreWordsList: Array<string> = []
+			if (inspection.globalValue instanceof Array) {
+				ignoreWordsList = inspection.globalValue;
+			}
 			ignoreWordsList.push(word);
-			userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), true);
+			userSettingsData.update('ignoreWordsList', this.getUniqueArray(ignoreWordsList), vscode.ConfigurationTarget.Global);
+			return true;
 		}
 		return false;
 	}
 
 	public setLanguage(language: string = 'en_US'): void {
-		// console.log( path.join( extensionRoot, 'languages', settings.language + '.aff' ) )
 		this.settings.language = language;
 		this.DICT = this.SpellChecker.parse(
 			{
