@@ -3,7 +3,7 @@
 [![Current Version](http://vsmarketplacebadge.apphb.com/version/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
 [![Install Count](http://vsmarketplacebadge.apphb.com/installs/swyphcosmo.spellchecker.svg)](https://marketplace.visualstudio.com/items?itemName=swyphcosmo.spellchecker)
 
-## Description 
+## Description
 
 This extension is a spell checker that uses a local dictionary for offline usage. [hunspell-spellchecker](https://github.com/GitbookIO/hunspell-spellchecker) is used to load hunspell formatted dictionaries. Errors are highlighted, and hovering over them will show possible suggestions. The `suggest` function was modified according to [https://github.com/GitbookIO/hunspell-spellchecker/pull/7] to speed up word suggestions.
 
@@ -13,7 +13,7 @@ This extension can be found on the [VSCode Marketplace](https://marketplace.visu
 
 Once errors are highlighted, there are several ways to view word suggestions.
 
-Hover over the error: 
+Hover over the error:
 
 ![Hover](images/hover-view.png)
 
@@ -21,7 +21,7 @@ By pressing `F8` to step through errors:
 
 ![Error View](images/error-view.png)
 
-You can correct the error by clicking on the Quick Fix (light bulb) icon. 
+You can correct the error by clicking on the Quick Fix (light bulb) icon.
 
 ![Quick Fix](images/making-corrections.gif)
 
@@ -31,7 +31,12 @@ You can configure the operation of this extension by editing settings in `File >
 
 The following settings can be changed:
 
-* `spellchecker.language`: supported languages are English (`"en_US"` or `"en_GB-ise"`), Spanish (`"es_ANY"`), French (`"fr"`) and Swedish (`"sv_SE"`).
+* `spellchecker.language`: supported languages are:
+	* English (`"en_US"` or `"en_GB-ise"`)
+	* French (`"fr"`)
+	* Greek (`"el_GR"`)
+	* Spanish (`"es_ANY"`)
+  * Swedish (`"sv_SE"`)
 * `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `spellchecker.documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `spellchecker.ignoreFileExtensions`: an array of file extensions that will not be spell checked
@@ -45,13 +50,13 @@ Additional sections are already removed from files, including:
 
 * YAML header for [pandoc](http://pandoc.org/) settings
 * `&nbsp;`
-* Pandoc citations 
+* Pandoc citations
 * Inline code blocks
 * Email addresses
 
 ## Benchmarks (sort of)
 
-A 397-line document was used to test the functionality. This was a conference paper that I recently wrote using Pandoc (citeproc and crossref). Simple space separation results in 5134 words. Here are some of the processing times as functionality was added. These were measured using `new Date().getTime()` so results were not consistent.  
+A 397-line document was used to test the functionality. This was a conference paper that I recently wrote using Pandoc (citeproc and crossref). Simple space separation results in 5134 words. Here are some of the processing times as functionality was added. These were measured using `new Date().getTime()` so results were not consistent.
 
 * Initial test: 1.577 minutes
 * Added suggestion dictionary for suggestions that have already been processed: 1.0507 minutes
@@ -66,7 +71,6 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Known Issues
 
-* Only U.S. English supported
 * Entire file is rechecked with each update
 
 ## TODO
@@ -80,7 +84,7 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 * `v1.2.11`:
 	* Increased icon size.
 * `v1.2.10`:
-	* Added settings to package.json so that VSCode doesn't give warnings when editing `settings.json`. 
+	* Added settings to package.json so that VSCode doesn't give warnings when editing `settings.json`.
 	* Workspace settings are now included in `.vscode/settings.json`. Previous `.vscode/spellchecker.json` will be migrated with the option to delete.
 	* Removed 'CreateConfigurationFile' action because configuration can now be handled though `File > Preferences > Settings`.
 	* Added command to set language.
@@ -139,7 +143,7 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Acknowledgements
 
-Big thanks to Sean McBreen for [Spell and Grammar Check](https://github.com/Microsoft/vscode-spell-check). 
+Big thanks to Sean McBreen for [Spell and Grammar Check](https://github.com/Microsoft/vscode-spell-check).
 
 ## License
 
