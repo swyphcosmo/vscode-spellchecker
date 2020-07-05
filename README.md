@@ -36,6 +36,7 @@ The following settings can be changed:
 	* French (`"fr"`)
 	* Greek (`"el_GR"`)
 	* Spanish (`"es_ANY"`)
+  * Swedish (`"sv_SE"`)
 * `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `spellchecker.documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `spellchecker.ignoreFileExtensions`: an array of file extensions that will not be spell checked
