@@ -17,6 +17,7 @@ interface SpellSettings {
 	ignoreRegExp: string[];
 	ignoreFileExtensions: string[];
 	checkInterval: number;
+	emitErrors: boolean;
 }
 
 export default class SpellCheckerProvider implements vscode.CodeActionProvider {
@@ -394,7 +395,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 					// Make sure word isn't in the ignore list
 					if (this.settings.ignoreWordsList.indexOf(token) < 0) {
 						if (token in this.problemCollection) {
-							let diag = new vscode.Diagnostic(lineRange, this.problemCollection[token], vscode.DiagnosticSeverity.Error);
+							let diag = new vscode.Diagnostic(lineRange, this.problemCollection[token], this.settings.emitErrors ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
 							diag.source = 'Spell Checker';
 							diagnostics.push(diag);
 						}
@@ -417,7 +418,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 								console.log(message);
 							}
 
-							let diag = new vscode.Diagnostic(lineRange, message, vscode.DiagnosticSeverity.Error);
+							let diag = new vscode.Diagnostic(lineRange, message, this.settings.emitErrors ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
 							diag.source = 'Spell Checker';
 							diagnostics.push(diag);
 
@@ -726,7 +727,8 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			documentTypes: ['markdown', 'latex', 'plaintext'],
 			ignoreRegExp: [],
 			ignoreFileExtensions: [],
-			checkInterval: 5000
+			checkInterval: 5000,
+			emitErrors: false
 		};
 
 		// Check user settings
@@ -751,8 +753,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			this.migrateWorkspaceSettings();
 		}
 		else {
-			if (DEBUG)
+			if (DEBUG) {
 				console.log('Workspace configuration file not found: \'' + SpellCheckerProvider.CONFIGFILE + '\'');
+			}
 		}
 
 		return returnSettings;
