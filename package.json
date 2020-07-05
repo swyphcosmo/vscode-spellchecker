@@ -47,7 +47,7 @@
                 "spellchecker.language": {
                     "type": "string",
                     "default": "en_US",
-                    "description": "Dictionary language. Currently supported: 'en_US', 'en_GB-ise', or 'es_ANY'."
+                    "description": "Dictionary language. Currently supported: 'en_US', 'en_GB-ise', 'fr', 'el_GR', or 'es_ANY'."
                 },
                 "spellchecker.documentTypes": {
                     "type": "array",
