@@ -373,10 +373,12 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 				while (position < 0) {
 					lastposition = 0;
 					linenumber++;
-					if (linenumber < lines.length)
+					if (linenumber < lines.length) {
 						position = lines[linenumber].indexOf(token, lastposition);
-					else
+					}
+					else {
 						console.log('Error text not found: ' + token);
+					}
 				}
 
 				colnumber = position;
@@ -387,8 +389,9 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 				}
 
 				if (!this.SpellChecker.check(token)) {
-					if (DEBUG)
+					if (DEBUG) {
 						console.log('Error: \'' + token + '\', line ' + String(linenumber + 1) + ', col ' + String(colnumber + 1));
+					}
 
 					let lineRange = new vscode.Range(linenumber, colnumber, linenumber, colnumber + token.length);
 
