@@ -36,7 +36,7 @@ The following settings can be changed:
 	* French (`"fr"`)
 	* Greek (`"el_GR"`)
 	* Spanish (`"es_ANY"`)
-  * Swedish (`"sv_SE"`)
+	* Swedish (`"sv_SE"`)
 * `spellchecker.ignoreWordsList`: an array of strings that contain the words that will not be checked by the spell checker
 * `spellchecker.documentTypes`: an array of strings that limit the document types that this extension will check. Default document types are `"markdown"`, `"latex"`, and `"plaintext"`.
 * `spellchecker.ignoreFileExtensions`: an array of file extensions that will not be spell checked
@@ -45,6 +45,7 @@ The following settings can be changed:
 	* `"/\\\\(.*\\\\.(jpg|jpeg|png|md|gif|JPG|JPEG|PNG|MD|GIF)\\\\)/g"`: remove links to image and markdown files
 	* `"/((http|https|ftp|git)\\\\S*)/g"`: remove hyperlinks
 	* `"/^(```\\\\s*)(\\\\w+)?(\\\\s*[\\\\w\\\\W]+?\\\\n*)(```\\\\s*)\\\\n*$/gm"`: remove code blocks
+* `spellchecker.emitErrors`: Emit errors instead of warnings for spelling mistakes
 
 Additional sections are already removed from files, including:
 
@@ -69,16 +70,21 @@ Rechecking the document during edits happens much faster ( < 1 sec ).
 
 This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 year old Sony Vaio VPCSA ). Full document checking occurred in 6.842 seconds. Realtime checking while editing occurs in less than 0.01 seconds.
 
-## Known Issues
-
-* Entire file is rechecked with each update
-
 ## TODO
 
 * Update animation demos under Functionality section.
 
 ## Release Notes
 
+* `v1.3.0`:
+	* Convert icon from svg to png.
+	* Emit warnings instead of errors. Added new setting to override to error (#62)
+	* Fixed bug in YAML config extraction (#61)
+	* Added Swedish language support ($46) Thanks [jsve](https://github.com/jsve)
+	* Updated to newest vscode extension API
+	* Bump npm and other package versions
+	* Updates to README (#52, #53) Thanks [PeterJCLaw](https://github.com/PeterJCLaw)
+	* Update Typescript formatting to be more typical
 * `v1.2.12`:
 	* Fixed bug in migration of old settings files (#41)
 * `v1.2.11`:
