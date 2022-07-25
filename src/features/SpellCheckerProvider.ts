@@ -17,7 +17,7 @@ interface SpellSettings {
 	ignoreRegExp: string[];
 	ignoreFileExtensions: string[];
 	checkInterval: number;
-	emitErrors: boolean;
+	suggestionSeverity: string;
 }
 
 export default class SpellCheckerProvider implements vscode.CodeActionProvider {
@@ -402,7 +402,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 					// Make sure word isn't in the ignore list
 					if (this.settings.ignoreWordsList.indexOf(token) < 0) {
 						if (token in this.problemCollection) {
-							let diag = new vscode.Diagnostic(lineRange, this.problemCollection[token], this.settings.emitErrors ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
+							let diag = new vscode.Diagnostic(lineRange, this.problemCollection[token], this.getSeverity());
 							diag.source = 'Spell Checker';
 							diagnostics.push(diag);
 						}
@@ -425,7 +425,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 								console.log(message);
 							}
 
-							let diag = new vscode.Diagnostic(lineRange, message, this.settings.emitErrors ? vscode.DiagnosticSeverity.Error : vscode.DiagnosticSeverity.Warning);
+							let diag = new vscode.Diagnostic(lineRange, message, this.getSeverity());
 							diag.source = 'Spell Checker';
 							diagnostics.push(diag);
 
@@ -452,6 +452,24 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 		}
 
 		this.lastcheck = Date.now();
+	}
+
+	private getSeverity(): vscode.DiagnosticSeverity {
+		if (this.settings.suggestionSeverity == "Error") {
+			return vscode.DiagnosticSeverity.Error;
+		}
+		if (this.settings.suggestionSeverity == "Hint") {
+			return vscode.DiagnosticSeverity.Hint;
+		}
+		if (this.settings.suggestionSeverity == "Information") {
+			return vscode.DiagnosticSeverity.Information;
+		}
+		if (this.settings.suggestionSeverity == "Warning") {
+			return vscode.DiagnosticSeverity.Warning;
+		}
+
+		// Should not be reached
+		return vscode.DiagnosticSeverity.Warning;
 	}
 
 	private processUserIgnoreRegex(text: string): string {
@@ -735,7 +753,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			ignoreRegExp: [],
 			ignoreFileExtensions: [],
 			checkInterval: 5000,
-			emitErrors: false
+			suggestionSeverity: "Warning",
 		};
 
 		// Check user settings

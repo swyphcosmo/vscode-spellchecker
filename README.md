@@ -76,11 +76,15 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 
 ## Release Notes
 
+* `next release`:
+	* Added English GB-ize/Oxford dictionary (#75) Thanks [kuro68k](https://github.com/kuro68k)
+	* Suggestion severity can be selected from a dropdown (addresses #71)
+
 * `v1.3.0`:
 	* Convert icon from svg to png.
 	* Emit warnings instead of errors. Added new setting to override to error (#62)
 	* Fixed bug in YAML config extraction (#61)
-	* Added Swedish language support ($46) Thanks [jsve](https://github.com/jsve)
+	* Added Swedish language support (#46) Thanks [jsve](https://github.com/jsve)
 	* Updated to newest vscode extension API
 	* Bump npm and other package versions
 	* Updates to README (#52, #53) Thanks [PeterJCLaw](https://github.com/PeterJCLaw)
