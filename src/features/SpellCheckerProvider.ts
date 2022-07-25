@@ -455,16 +455,16 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 	}
 
 	private getSeverity(): vscode.DiagnosticSeverity {
-		if (this.settings.suggestionSeverity == "Error"){
+		if (this.settings.suggestionSeverity == "Error") {
 			return vscode.DiagnosticSeverity.Error;
 		}
-		if (this.settings.suggestionSeverity == "Hint"){
+		if (this.settings.suggestionSeverity == "Hint") {
 			return vscode.DiagnosticSeverity.Hint;
 		}
-		if (this.settings.suggestionSeverity == "Information"){
+		if (this.settings.suggestionSeverity == "Information") {
 			return vscode.DiagnosticSeverity.Information;
 		}
-		if (this.settings.suggestionSeverity == "Warning"){
+		if (this.settings.suggestionSeverity == "Warning") {
 			return vscode.DiagnosticSeverity.Warning;
 		}
 
