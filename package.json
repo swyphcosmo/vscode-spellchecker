@@ -2,7 +2,7 @@
     "name": "spellchecker",
     "displayName": "SpellChecker",
     "description": "Offline spell checker",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "publisher": "swyphcosmo",
     "engines": {
         "vscode": "^1.46.0"
@@ -12,7 +12,7 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onStartupFinished"
     ],
     "main": "./out/src/extension",
     "contributes": {
