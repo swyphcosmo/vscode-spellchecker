@@ -32,7 +32,7 @@ You can configure the operation of this extension by editing settings in `File >
 The following settings can be changed:
 
 * `spellchecker.language`: supported languages are:
-	* English (`"en_US"` or `"en_GB-ise"`)
+	* English (`"en_US"`, `"en_GB-ize"`, or `"en_GB-ise"`)
 	* French (`"fr"`)
 	* Greek (`"el_GR"`)
 	* Spanish (`"es_ANY"`)

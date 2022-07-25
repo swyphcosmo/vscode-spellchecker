@@ -44,7 +44,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			filename: 'en_US'
 		},
 		{
-			description: 'English UK',
+			description: 'English UK (-ize/Oxford)',
+			filename: 'en_GB-ize'
+		},
+		{
+			description: 'English UK (-ise)',
 			filename: 'en_GB-ise'
 		},
 		{
