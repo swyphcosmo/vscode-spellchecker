@@ -63,6 +63,11 @@
                     "default": [],
                     "description": "Array of file extensions that will not be spell checked."
                 },
+                "spellchecker.ignoreFilenames": {
+                    "type": "array",
+                    "default": [],
+                    "description": "Array of filenames that will not be spell checked."
+                },
                 "spellchecker.checkInterval": {
                     "type": "integer",
                     "default": 5000,
