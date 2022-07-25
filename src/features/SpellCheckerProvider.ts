@@ -140,7 +140,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 		});
 
 		vscode.window.showQuickPick(options, qpOptions).then(val => {
-			let language = val.match(/\(.*\)/g)[0];
+			let language = val.match(/\(\S*\)/g)[0];
 			language = language.substring(1, language.length - 1);
 			this.setLanguage(language);
 		});
