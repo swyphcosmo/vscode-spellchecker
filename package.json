@@ -93,16 +93,16 @@
         "compile": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "vscode-test": "^1.4.0",
         "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.40",
-        "@types/vscode": "^1.46.0"
+        "@types/vscode": "^1.46.0",
+        "vscode-test": "^1.4.0"
     },
     "dependencies": {
         "fs": "0.0.1-security",
         "jsonminify": "^0.4.1",
         "mkdirp": "^0.5.1",
-        "npm": "^6.14.5",
+        "npm": "^8.15.0",
         "path": "^0.12.7",
         "typescript": "^3.9.6"
     },
