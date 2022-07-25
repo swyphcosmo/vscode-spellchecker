@@ -16,6 +16,7 @@ interface SpellSettings {
 	documentTypes: string[];
 	ignoreRegExp: string[];
 	ignoreFileExtensions: string[];
+	ignoreFilenames: string[];
 	checkInterval: number;
 	suggestionSeverity: string;
 }
@@ -157,6 +158,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			return;
 		}
 
+		// Is this a filename that should be ignored?
+		if (this.settings.ignoreFilenames.indexOf(path.basename(event.document.fileName)) >= 0) {
+			return
+		}
+
 		// If checkInterval is negative, the document will not be automatically checked
 		if (this.settings.checkInterval < 0) {
 			return;
@@ -217,6 +223,11 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 		// Is this a file extension that we should ignore?
 		if (this.settings.ignoreFileExtensions.indexOf(path.extname(textDocument.fileName)) >= 0) {
 			return;
+		}
+
+		// Is this a filename that should be ignored?
+		if (this.settings.ignoreFilenames.indexOf(path.basename(textDocument.fileName)) >= 0) {
+			return
 		}
 
 		let startTime = new Date().getTime();
@@ -752,6 +763,7 @@ export default class SpellCheckerProvider implements vscode.CodeActionProvider {
 			documentTypes: ['markdown', 'latex', 'plaintext'],
 			ignoreRegExp: [],
 			ignoreFileExtensions: [],
+			ignoreFilenames: [],
 			checkInterval: 5000,
 			suggestionSeverity: "Warning",
 		};

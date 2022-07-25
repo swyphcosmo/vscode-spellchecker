@@ -80,6 +80,7 @@ This same document was checked on a newer computer ( Razer Blade Stealth vs. 4 y
 	* Added English GB-ize/Oxford dictionary (#75) Thanks [kuro68k](https://github.com/kuro68k)
 	* Suggestion severity can be selected from a dropdown (addresses #71)
 	* Updated Spanish dictionary which contained HTML headers in error
+	* Add user setting for ignoring file by name (addresses #72)
 * `v1.3.0`:
 	* Convert icon from svg to png.
 	* Emit warnings instead of errors. Added new setting to override to error (#62)
